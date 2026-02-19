@@ -33,7 +33,25 @@ bash install.bash --laser <laser_sensor> --udev-only
 bash install.bash --depth <depth_sensor> --udev-only
 ```
 
-### 4. Verify the device symlink
+Some sensors create a `/dev` symlink on the host after the udev rule is installed, for example:
+
+| Sensor value | Host `/dev` path |
+|--------------|-----------------|
+| `ydlidar` | `/dev/ydlidar` |
+| `ld06`, `ld19`, `stl27l` | `/dev/ldlidar` |
+| `a1`, `a2`, `a3`, ... | `/dev/rplidar` |
+
+Use this path when mapping the device in `docker-compose.yaml` (see step 6).
+
+### 4. Reload udev rules
+
+After installing, apply the rules without rebooting:
+
+```bash
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+### 5. Verify the device symlink
 
 Plug in the sensor, then confirm the udev symlink exists on the host:
 
@@ -43,7 +61,7 @@ ls /dev/<sensor_name>
 ls /dev/ldlidar
 ```
 
-### 5. Update the bringup service devices
+### 6. Update the bringup service devices
 
 Edit `docker/docker-compose.yaml` and update the `bringup` service's `devices` section
 to map the correct host device into the container:
@@ -55,7 +73,7 @@ to map the correct host device into the container:
       - /dev/ldlidar:/dev/ldlidar
 ```
 
-### 6. Run the robot
+### 7. Run the robot
 
 ```bash
 docker compose up bringup
