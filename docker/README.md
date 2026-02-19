@@ -93,6 +93,8 @@ export TMUXINATOR_CONFIG=$PWD
 tmuxinator start hardware
 ```
 
+Once running, visualization is available at: `http://<robot_ip>:3000`
+
 To stop, press Ctrl + C in any pane and run:
 
 ```bash
@@ -121,6 +123,8 @@ export TMUXINATOR_CONFIG=$PWD
 ```
 tmuxinator start sim
 ```
+
+Once running, visualization is available at: `http://<host_ip>:3000`
 
 To stop the simulation, stop any process by pressing Ctrl + C and run:
 ```
