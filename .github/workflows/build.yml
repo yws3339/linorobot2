@@ -1,26 +1,30 @@
 name: colcon build
-
 on:
+  push:
+    branches: [ docker ]
   pull_request:
-    branches: [ jazzy ]  # Adjust this if your default branch is different
-
+    branches: [ jazzy ] # Adjust this if your default branch is different
 jobs:
   build:
-    runs-on: ubuntu-24.04 
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        base_image: [hardware, gazebo, gazebo-cuda]
     steps:
-    - uses: actions/checkout@v4
-    - name: Install and Build ROS2 environment
-      run: |
-        export UBUNTU_VER=24.04
-        export USE_ROS_DISTRO=jazzy
-        export RMW=cyclonedds
-        cd docker && docker compose build
-      shell: bash
-    - name: Nvidia - Install and Build ROS2 environment
-      run: |
-        export UBUNTU_VER=24.04
-        export USE_ROS_DISTRO=jazzy
-        export RMW=cyclonedds
-        export RUNTIME=nvidia
-        cd docker && docker compose build
-      shell: bash
+      - uses: actions/checkout@v4
+      
+      - name: Create fake udev directory for hardware builds
+        run: |
+          sudo mkdir -p /etc/udev/rules.d
+          bash install.bash --laser ld19 --udev-only
+          cat /etc/udev/rules.d/ldlidar.rules
+
+      - name: Install and Build ROS2 environment - ${{ matrix.base_image }}
+        run: |
+          export ROS_DISTRO=jazzy
+          export ROBOT_BASE=2wd
+          export LASER_SENSOR=ld19
+          export BASE_IMAGE=${{ matrix.base_image }}
+          export 
+          cd docker && docker compose build
+        shell: bash
