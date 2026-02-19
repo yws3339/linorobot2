@@ -87,15 +87,22 @@ to map the correct host devices into the container:
 
 ### 7. Run the robot
 
+#### 7.1. First, export the tmuxinator project path:
+
 ```bash
 cd linorobot2/docker/demos
 export TMUXINATOR_CONFIG=$PWD
+```
+
+#### 7.2. Start the robot:
+
+```bash
 tmuxinator start hardware
 ```
 
 Once running, visualization is available at: `http://<robot_ip>:3000`
 
-To stop, press Ctrl + C in any pane and run:
+To stop, press `Ctrl+B` then `D` to detach from the tmux session, then run:
 
 ```bash
 tmuxinator stop hardware
@@ -128,7 +135,7 @@ The headless setup allows the simulation to run on remote servers or cloud insta
 
 This approach is advantageous in two ways:
 
-- **Cloud simulation**: The entire simulation stack — Gazebo, Nav2, and sensor processing — runs on a remote server. The browser becomes the only local interface needed, with no requirement for a local ROS installation or display.
+- **Cloud simulation**: The entire simulation stack — Gazebo, Nav2, and sensor processing — runs on a remote server. The browser becomes the only local interface needed, with no requirement for a local ROS installation or display. Beyond accessibility, cloud simulation enables scaling compute on demand — larger worlds, more complex physics (e.g. fluid or water dynamics), or heavier sensor configurations can be handled simply by upgrading the cloud instance, without being constrained by the specs of physical hardware.
 
 - **Efficient remote visualization**: In a traditional setup, tools like RViz on a remote machine receive raw topic data (e.g. point clouds, laser scans) over the network, which can be highly bandwidth-intensive. With VNC, only the compressed video stream of the rendered display is transmitted — significantly reducing network usage, especially for data-heavy sensors like 3D LiDARs or RGBD cameras.
 
@@ -155,7 +162,7 @@ tmuxinator start sim
 
 Once running, visualization is available at: `http://<host_ip>:3000`
 
-To stop the simulation, stop any process by pressing Ctrl + C and run:
+To stop the simulation, press `Ctrl+B` then `D` to detach from the tmux session, then run:
 ```
 tmuxinator stop sim
 ```
