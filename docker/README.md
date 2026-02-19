@@ -105,20 +105,49 @@ tmuxinator stop hardware
 
 ## Simulation
 
-### 1. Install Tmuxinator
+### 1. Configure docker/.env for simulation
+
+Edit `docker/.env` and set the `BASE_IMAGE` variable to select the simulation environment:
+
+```
+BASE_IMAGE=gazebo        # Standard Gazebo simulation
+BASE_IMAGE=gazebo-cuda   # Gazebo with CUDA support (recommended for machines with an NVIDIA GPU)
+```
+
+#### gazebo-cuda
+
+The `gazebo-cuda` image enables CUDA support for Gazebo on machines equipped with an NVIDIA GPU. Gazebo is a graphics-intensive simulator — it renders 3D environments, lighting, and sensor data in real time. Running it on a GPU offloads the heavy rendering workload from the CPU, resulting in smoother simulation with higher frame rates and more stable physics-rendering synchronization, particularly when using depth sensors or camera plugins that produce large visual outputs.
+
+#### VirtualGL
+
+Since the default Docker setup is assumed to be **headless** (no physical display attached), the `gazebo-cuda` image also runs **VirtualGL**, which intercepts OpenGL calls from Gazebo and redirects them to the GPU for hardware-accelerated rendering. Without VirtualGL on a headless server, Gazebo would fall back to software rendering, negating the benefits of the GPU entirely.
+
+#### Headless setup and cloud simulation
+
+The headless setup allows the simulation to run on remote servers or cloud instances such as **GCP** or **AWS**, where no monitor is physically connected. The rendered display is forwarded to display `:200`, where a VNC server captures it and streams it to a web-based VNC client accessible from a browser at `http://<host_ip>:3000`.
+
+This approach is advantageous in two ways:
+
+- **Cloud simulation**: The entire simulation stack — Gazebo, Nav2, and sensor processing — runs on a remote server. The browser becomes the only local interface needed, with no requirement for a local ROS installation or display.
+
+- **Efficient remote visualization**: In a traditional setup, tools like RViz on a remote machine receive raw topic data (e.g. point clouds, laser scans) over the network, which can be highly bandwidth-intensive. With VNC, only the compressed video stream of the rendered display is transmitted — significantly reducing network usage, especially for data-heavy sensors like 3D LiDARs or RGBD cameras.
+
+---
+
+### 2. Install Tmuxinator
 
 Follow the installation instructions for Tmuxinator [here](https://github.com/tmuxinator/tmuxinator?tab=readme-ov-file#installation)
 
-### 2. Running the demos using Tmuxinator and Docker
+### 3. Running the demos using Tmuxinator and Docker
 
-#### 2.1. First, export the tmuxinator project path:
+#### 3.1. First, export the tmuxinator project path:
 
 ```
 cd linorobot2/docker/demos
 export TMUXINATOR_CONFIG=$PWD
 ```
 
-#### 2.2. Running the Nav2 demo in Gazebo::
+#### 3.2. Running the Nav2 demo in Gazebo:
 
 ```
 tmuxinator start sim
