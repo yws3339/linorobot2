@@ -8,7 +8,6 @@ FROM ${BASE_IMAGE:-gazebo-cuda} AS final
 
 # Build arguments
 ARG VIRTUALGL_VER="3.1"
-ARG VIRTUALGL_ENABLED="true"
 ARG TARGETARCH
 ARG ROS_DISTRO=jazzy
 ARG BASE_IMAGE=gazebo-cuda
@@ -21,11 +20,11 @@ ARG WORKSPACE=/home/ros/linorobot2_ws
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
-    VIRTUALGL_ENABLED=${VIRTUALGL_ENABLED} \
     WORKSPACE=${WORKSPACE}
 
-# Install VirtualGL and graphics libraries
-RUN if [ "${VIRTUALGL_ENABLED}" = "true" ]; then \
+# Install VirtualGL and graphics libraries (gazebo-cuda only)
+RUN /bin/bash -c " \
+    if [ '${BASE_IMAGE}' = 'gazebo-cuda' ]; then \
         apt-get update && \
         apt-get install -y --no-install-recommends \
             wget \
@@ -39,7 +38,7 @@ RUN if [ "${VIRTUALGL_ENABLED}" = "true" ]; then \
         apt-get install -y /tmp/virtualgl.deb && \
         rm -f /tmp/virtualgl.deb && \
         rm -rf /var/lib/apt/lists/* ; \
-    fi
+    fi"
 
 # Copy and configure entrypoint before leaving root user
 COPY docker/entrypoint.sh /entrypoint.sh
