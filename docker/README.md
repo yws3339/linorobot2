@@ -21,19 +21,16 @@ docker compose build
 ### 3. Install udev rules on the host
 
 The Docker image already contains the sensor drivers (installed during build). To create
-the `/dev/<sensor>` symlinks on the **host** machine, run `install.bash` with `--udev-only`:
+the `/dev/<sensor>` symlinks on the **host** machine, run `install.bash` with `--udev-only`.
+
+**`--udev-only` is required** — it forces the script to only copy udev rules and skip
+driver installation (which is not needed since drivers are already inside the container).
 
 ```bash
 # From the linorobot2 repo root on the host:
-bash install.bash --laser <laser_sensor>
-# and/or
-bash install.bash --depth <depth_sensor>
-```
-
-Use `--udev-only` if you only want the udev rules without reinstalling drivers:
-
-```bash
 bash install.bash --laser <laser_sensor> --udev-only
+# and/or
+bash install.bash --depth <depth_sensor> --udev-only
 ```
 
 ### 4. Verify the device symlink
