@@ -109,20 +109,13 @@ services:
     extends: base
     command: rviz2
 
-  webtop:
-    container_name: webtop
-    image: lscr.io/linuxserver/webtop:latest
-    environment:
-    - DISPLAY=:200
-    network_mode: host
-    devices:
-    - /dev/dri:/dev/dri 
-
   kasmvnc:
     container_name: kasmvnc
     image: lsiobase/kasmvnc:alpine321
+    network_mode: host
     environment:
     - DISPLAY=:200
-    network_mode: host
     devices:
     - /dev/dri:/dev/dri
+    volumes:
+    - ./kasm-autostart:/defaults/autostart
