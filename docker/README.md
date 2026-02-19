@@ -43,9 +43,9 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 ### 5. Verify the device symlinks
 
-**Microcontroller (Teensy):**
+**Microcontroller:**
 
-Plug in the Teensy, then confirm the device node exists on the host:
+Plug in the microcontroller (for example Raspberry Pi Pico), then confirm the device node exists on the host:
 
 ```bash
 ls /dev/ttyACM0
@@ -67,7 +67,7 @@ Some sensors create a `/dev` symlink on the host after the udev rule is installe
 
 | Device | Host `/dev` path |
 |--------|-----------------|
-| Teensy microcontroller | `/dev/ttyACM0` |
+| Raspberry Pi Pico microcontroller | `/dev/ttyACM0` |
 | `ydlidar` | `/dev/ydlidar` |
 | `ld06`, `ld19`, `stl27l` | `/dev/ldlidar` |
 | `a1`, `a2`, `a3`, ... | `/dev/rplidar` |
@@ -81,7 +81,7 @@ to map the correct host devices into the container:
   bringup:
     ...
     devices:
-      - /dev/ttyACM0:/dev/ttyACM0 # Robot's microcontroller (e.g. Teensy)
+      - /dev/ttyACM0:/dev/ttyACM0 # Robot's microcontroller (e.g. Pico)
       - /dev/ldlidar:/dev/ldlidar # Laser sensor (adjust to match your sensor symlink)
 ```
 
