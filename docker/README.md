@@ -41,7 +41,17 @@ After installing, apply the rules without rebooting:
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-### 5. Verify the device symlink
+### 5. Verify the device symlinks
+
+**Microcontroller (Teensy):**
+
+Plug in the Teensy, then confirm the device node exists on the host:
+
+```bash
+ls /dev/ttyACM0
+```
+
+**Sensors:**
 
 Plug in the sensor, then confirm the udev symlink exists on the host:
 
@@ -55,8 +65,9 @@ ls /dev/<sensor_name>
 
 Some sensors create a `/dev` symlink on the host after the udev rule is installed:
 
-| Sensor value | Host `/dev` path |
-|--------------|-----------------|
+| Device | Host `/dev` path |
+|--------|-----------------|
+| Teensy microcontroller | `/dev/ttyACM0` |
 | `ydlidar` | `/dev/ydlidar` |
 | `ld06`, `ld19`, `stl27l` | `/dev/ldlidar` |
 | `a1`, `a2`, `a3`, ... | `/dev/rplidar` |
@@ -64,19 +75,28 @@ Some sensors create a `/dev` symlink on the host after the udev rule is installe
 ### 6. Update the bringup service devices
 
 Edit `docker/docker-compose.yaml` and update the `bringup` service's `devices` section
-to map the correct host device into the container:
+to map the correct host devices into the container:
 
 ```yaml
   bringup:
     ...
     devices:
-      - /dev/ldlidar:/dev/ldlidar
+      - /dev/ttyACM0:/dev/ttyACM0 # Robot's microcontroller (e.g. Teensy)
+      - /dev/ldlidar:/dev/ldlidar # Laser sensor (adjust to match your sensor symlink)
 ```
 
 ### 7. Run the robot
 
 ```bash
-docker compose up bringup
+cd linorobot2/docker/demos
+export TMUXINATOR_CONFIG=$PWD
+tmuxinator start hardware
+```
+
+To stop, press Ctrl + C in any pane and run:
+
+```bash
+tmuxinator stop hardware
 ```
 
 ---
