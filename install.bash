@@ -74,11 +74,6 @@ if [ "$UDEV_ONLY" = "true" ]; then
         show_help
         exit 1
     fi
-elif [[ -z "$BASE" && -z "$LASER_SENSOR" && -z "$DEPTH_SENSOR" ]]; then
-    echo "Error: at least one option is required."
-    echo
-    show_help
-    exit 1
 fi
 
 set -e
