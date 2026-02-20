@@ -1,6 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
+source "/opt/ros/$ROS_DISTRO/setup.bash"
+source "$WORKSPACE/install/setup.bash"
 
-source /opt/ros/rosdistro/setup.bash
-source /root/linorobot2_ws/install/setup.bash
 
-$@
+if command -v vglrun &>/dev/null; then
+    exec vglrun +v -d /dev/dri/card${GPU_ID:-0} "$@"
+else
+    exec "$@"
+fi
