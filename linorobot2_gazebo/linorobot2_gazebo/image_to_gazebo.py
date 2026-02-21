@@ -44,13 +44,11 @@ def _resolve_src_pkg_dir() -> str | None:
 
 
 _SRC_PKG_DIR = _resolve_src_pkg_dir()
-print(_SRC_PKG_DIR)  # Debug print to verify the resolved source package directory
 _DEFAULT_IMAGES_DIR = (
     os.path.join(_SRC_PKG_DIR, 'linorobot2_gazebo', 'images')
     if _SRC_PKG_DIR else os.path.join(_SCRIPT_DIR, 'images')
 )
 
-print(_DEFAULT_IMAGES_DIR)  # Debug print to verify the default images directory
 _DEFAULT_MODELS_DIR = (
     os.path.join(_SRC_PKG_DIR, 'models')
     if _SRC_PKG_DIR else os.path.join(_PKG_DIR, 'models')
@@ -249,6 +247,9 @@ class MapImageProcessor(tk.Tk):
             # Redraw any markers
             self.redraw_markers()
 
+            # Draw axis arrows on top
+            self.draw_axis_arrows()
+
     def redraw_markers(self):
         """Redraw markers on the canvas if any exist"""
         # Redraw origin marker if it exists
@@ -262,14 +263,72 @@ class MapImageProcessor(tk.Tk):
             # Clear previous origin marker
             self.canvas.delete("origin_marker")
 
-            # Draw crosshair marker
-            size = 10
-            self.canvas.create_line(canvas_x-size, canvas_y, canvas_x+size, canvas_y,
-                                  fill="blue", width=2, tags="origin_marker")
-            self.canvas.create_line(canvas_x, canvas_y-size, canvas_x, canvas_y+size,
-                                  fill="blue", width=2, tags="origin_marker")
-            self.canvas.create_oval(canvas_x-3, canvas_y-3, canvas_x+3, canvas_y+3,
-                                  fill="blue", outline="white", tags="origin_marker")
+            # Draw axis arrows at origin
+            self._draw_origin_marker(canvas_x, canvas_y)
+
+    def _draw_origin_marker(self, canvas_x, canvas_y):
+        """Draw X (red, right) and Y (green, up) axis arrows centred on the origin point."""
+        arrow_len = 40
+        self.canvas.create_line(
+            canvas_x, canvas_y, canvas_x + arrow_len, canvas_y,
+            fill="red", width=2, arrow=tk.LAST, arrowshape=(10, 12, 4),
+            tags="origin_marker"
+        )
+        self.canvas.create_text(
+            canvas_x + arrow_len + 10, canvas_y,
+            text="X", fill="red", font=("TkDefaultFont", 9, "bold"),
+            tags="origin_marker"
+        )
+        self.canvas.create_line(
+            canvas_x, canvas_y, canvas_x, canvas_y - arrow_len,
+            fill="green", width=2, arrow=tk.LAST, arrowshape=(10, 12, 4),
+            tags="origin_marker"
+        )
+        self.canvas.create_text(
+            canvas_x, canvas_y - arrow_len - 10,
+            text="Y", fill="green", font=("TkDefaultFont", 9, "bold"),
+            tags="origin_marker"
+        )
+        # Small dot at the origin point
+        self.canvas.create_oval(
+            canvas_x - 3, canvas_y - 3, canvas_x + 3, canvas_y + 3,
+            fill="white", outline="black", width=1, tags="origin_marker"
+        )
+
+    def draw_axis_arrows(self):
+        """Draw X (red, right) and Y (green, up) axis arrows in the bottom-left of the canvas."""
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+
+        self.canvas.delete("axis_arrows")
+
+        origin_x = 40
+        origin_y = canvas_height - 40
+        arrow_len = 50
+
+        # X axis — red, pointing right
+        self.canvas.create_line(
+            origin_x, origin_y, origin_x + arrow_len, origin_y,
+            fill="red", width=2, arrow=tk.LAST, arrowshape=(10, 12, 4),
+            tags="axis_arrows"
+        )
+        self.canvas.create_text(
+            origin_x + arrow_len + 10, origin_y,
+            text="X", fill="red", font=("TkDefaultFont", 10, "bold"),
+            tags="axis_arrows"
+        )
+
+        # Y axis — green, pointing up (negative canvas-y direction)
+        self.canvas.create_line(
+            origin_x, origin_y, origin_x, origin_y - arrow_len,
+            fill="green", width=2, arrow=tk.LAST, arrowshape=(10, 12, 4),
+            tags="axis_arrows"
+        )
+        self.canvas.create_text(
+            origin_x, origin_y - arrow_len - 10,
+            text="Y", fill="green", font=("TkDefaultFont", 10, "bold"),
+            tags="axis_arrows"
+        )
 
     def on_canvas_click(self, event):
         """Handle clicks on the canvas based on the current mode"""
@@ -393,14 +452,8 @@ class MapImageProcessor(tk.Tk):
         # Clear previous origin marker if exists
         self.canvas.delete("origin_marker")
 
-        # Draw crosshair marker at the clicked position
-        size = 10
-        self.canvas.create_line(canvas_x-size, canvas_y, canvas_x+size, canvas_y,
-                               fill="blue", width=2, tags="origin_marker")
-        self.canvas.create_line(canvas_x, canvas_y-size, canvas_x, canvas_y+size,
-                               fill="blue", width=2, tags="origin_marker")
-        self.canvas.create_oval(canvas_x-3, canvas_y-3, canvas_x+3, canvas_y+3,
-                               fill="blue", outline="white", tags="origin_marker")
+        # Draw axis arrows at the clicked position
+        self._draw_origin_marker(canvas_x, canvas_y)
 
         self.status_bar.config(text=f"Origin set at world coordinates: [{world_x:.2f}, {world_y:.2f}, 0.0]")
         self.click_mode = None
