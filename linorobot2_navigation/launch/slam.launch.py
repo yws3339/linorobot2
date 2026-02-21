@@ -81,13 +81,13 @@ def generate_launch_description():
             description='Initial robot yaw'
         ),
 
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource(navigation_launch_path),
-        #     launch_arguments={
-        #         'use_sim_time': LaunchConfiguration("sim"),
-        #         'params_file': nav2_config_path
-        #     }.items()
-        # ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(navigation_launch_path),
+            launch_arguments={
+                'use_sim_time': LaunchConfiguration("sim"),
+                'params_file': nav2_config_path
+            }.items()
+        ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(slam_launch_path),
