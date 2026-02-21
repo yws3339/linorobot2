@@ -301,7 +301,7 @@ Tmuxinator profiles live in `docker/profiles/`. Each profile defines which Docke
 |---------|-------------|
 | `kasmvnc` | KasmVNC server — streams the virtual display (`:200`) to a browser at `http://<host_ip>:3000`. Should be included in every profile that uses GUI tools. |
 | `dev` | Development container — mounts the host `linorobot2` repo into the container so edits are reflected immediately without rebuilding the image. Runs `sleep infinity` so you can exec into it as needed. |
-| `gazebo` | Launches Gazebo with the world specified by `$WORLD` (default: `playground`). Requires `BASE_IMAGE=gazebo` or `gazebo-cuda`. |
+| `gazebo` | Launches Gazebo with the world specified by `$WORLD` (default: `playground`). Loads `<WORLD>.sdf` from the `linorobot2_gazebo/worlds` directory. Pass `world_path:=<path>` in the launch command to use an absolute SDF path instead. Requires `BASE_IMAGE=gazebo` or `gazebo-cuda`. |
 | `bringup` | Starts the robot hardware stack (micro-ROS agent, sensors). Requires `ROBOT_BASE`, `LASER_SENSOR`, and/or `DEPTH_SENSOR` set in `.env`, and the corresponding devices mapped. |
 | `slam` | Runs SLAM (online mapping). Set `SIM=true` when used with `gazebo`. |
 | `navigate` | Runs Nav2 navigation with a pre-built map. Set `SIM=true` when used with `gazebo`. |
