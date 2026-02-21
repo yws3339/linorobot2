@@ -41,10 +41,9 @@ services:
     environment:
       - IGN_IP=127.0.0.1
       - GZ_IP=127.0.0.1
-      - WORLD=${WORLD:-playground}
     command: >
       ros2 launch linorobot2_gazebo gazebo.launch.py
-      world_name:=${WORLD}
+      world_name:=${WORLD:-turtlebot3_world}
       spawn_y:=${SPAWN_Y:-0.0}
       spawn_yaw:=${SPAWN_Z:-0.0}
     devices:
