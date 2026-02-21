@@ -498,9 +498,9 @@ class MapImageProcessor(tk.Tk):
 
         # Center on parent
         self.update_idletasks()
-        px = self.winfo_x() + self.winfo_width() // 2 - 150
-        py = self.winfo_y() + self.winfo_height() // 2 - 65
-        dialog.geometry(f"300x130+{px}+{py}")
+        px = self.winfo_x() + self.winfo_width() // 2 - 115
+        py = self.winfo_y() + self.winfo_height() // 2 - 55
+        dialog.geometry(f"230x110+{px}+{py}")
         dialog.wait_visibility()
         dialog.grab_set()
 
@@ -699,7 +699,7 @@ class MapImageProcessor(tk.Tk):
             splash.destroy()
             self.generate_button.config(state=tk.NORMAL)
             if success:
-                world_file = os.path.join(world_dir, f'{world_name}_world.sdf')
+                world_file = os.path.join(world_dir, f'{world_name}.sdf')
                 self._show_result_dialog(
                     "Success",
                     f"World '{world_name}' generated!\n\nModel: {model_dir}\nWorld SDF: {world_file}"
