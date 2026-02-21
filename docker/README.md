@@ -35,7 +35,7 @@ Alternatively, run the build manually:
 HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose build
 ```
 
-> Passing `HOST_UID` and `HOST_GID` is important when using the `dev` service, which mounts the host repository directory into the container. Without it, files created inside the container (e.g. build artifacts) will be owned by root on the host.
+> Passing `HOST_UID` and `HOST_GID` is important when using the `dev` service, which mounts the host repository directory into the container. Without these, files created inside the container (e.g. build artifacts) will be owned by root on the host.
 
 ---
 
@@ -47,7 +47,7 @@ All tmuxinator configs in `docker/profiles` (`dev`, `hardware`, `sim`) route GUI
 http://<host_ip>:3000
 ```
 
-On machines with an NVIDIA GPU, the `gazebo-cuda` image uses **VirtualGL** to intercept OpenGL calls from Gazebo and redirect them to the GPU for hardware-accelerated rendering. Without this, a headless server would fall back to software rendering, negating the GPU entirely.
+On machines with an NVIDIA GPU, the `gazebo-cuda` image uses **VirtualGL** to intercept OpenGL calls from Gazebo and redirect them to the GPU for hardware-accelerated rendering. Without this, a headless server falls back to software rendering, bypassing the GPU entirely.
 
 ### Why run headless with a browser interface?
 
@@ -136,7 +136,7 @@ docker compose down
 > ros2 node list
 > ros2 run teleop_twist_keyboard teleop_twist_keyboard
 > ```
-> No extra setup is needed; the workspace is already sourced when the shell starts.
+> No extra setup is needed — `/opt/ros/<ros_distro>/setup.bash` is sourced automatically when the shell starts. To use workspace packages, run `source install/setup.bash` inside `linorobot2_ws`.
 
 ---
 
@@ -189,7 +189,7 @@ ls /dev/<sensor_name>
 # /dev/rplidar   (a1, a2, a3, ...)
 ```
 
-Some sensors create a `/dev` symlink on the host after the udev rule is installed:
+Expected `/dev` paths after udev rules are installed:
 
 | Device | Host `/dev` path |
 |--------|-----------------|
