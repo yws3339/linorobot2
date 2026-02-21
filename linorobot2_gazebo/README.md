@@ -139,7 +139,7 @@ models/
         └── <map_name>.stl
 
 worlds/
-└── <map_name>_world.sdf
+└── <map_name>.sdf
 ```
 
 #### Using the Generated Worlds in Gazebo
@@ -147,5 +147,5 @@ worlds/
 After rebuilding (or with `--symlink-install`), launch any generated world with:
 
 ```bash
-ros2 launch linorobot2_gazebo gazebo.launch.py world_name:=<map_name>_world
+ros2 launch linorobot2_gazebo gazebo.launch.py world_name:=<map_name>
 ```
