@@ -22,44 +22,44 @@ XML_MODEL_CONFIG_TEMPLATE = """
 """
 
 XML_MODEL_TEMPLATE = """
-    <model name="{name}">
-      <link name="link">
-        <inertial>
-          <mass>15</mass>
-          <inertia>
-            <ixx>0.0</ixx>
-            <ixy>0.0</ixy>
-            <ixz>0.0</ixz>
-            <iyy>0.0</iyy>
-            <iyz>0.0</iyz>
-            <izz>0.0</izz>
-          </inertia>
-        </inertial>
-        <collision name="collision">
-          <pose>0 0 0 0 0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>model://{name}/meshes/{name}.stl</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <pose>0 0 0 0 0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>model://{name}/meshes/{name}.stl</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <ambient>1 1 1 1</ambient>
-            <diffuse>1 1 1 1</diffuse>
-            <specular>0.5 0.5 0.5 1</specular>
-            <emissive>0 0 0 1</emissive>
-          </material>
-        </visual>
-      </link>
-      <static>1</static>
-    </model>
+<model name="{name}">
+  <link name="link">
+    <inertial>
+      <mass>15</mass>
+      <inertia>
+        <ixx>0.0</ixx>
+        <ixy>0.0</ixy>
+        <ixz>0.0</ixz>
+        <iyy>0.0</iyy>
+        <iyz>0.0</iyz>
+        <izz>0.0</izz>
+      </inertia>
+    </inertial>
+    <collision name="collision">
+      <pose>0 0 0 0 0 0</pose>
+      <geometry>
+        <mesh>
+          <uri>model://{name}/meshes/{name}.stl</uri>
+        </mesh>
+      </geometry>
+    </collision>
+    <visual name="visual">
+      <pose>0 0 0 0 0 0</pose>
+      <geometry>
+        <mesh>
+          <uri>model://{name}/meshes/{name}.stl</uri>
+        </mesh>
+      </geometry>
+      <material>
+        <ambient>1 1 1 1</ambient>
+        <diffuse>1 1 1 1</diffuse>
+        <specular>0.5 0.5 0.5 1</specular>
+        <emissive>0 0 0 1</emissive>
+      </material>
+    </visual>
+  </link>
+  <static>1</static>
+</model>
 """
 
 XML_SDF_TEMPLATE = """
@@ -215,11 +215,10 @@ def process_map(map_info, export_dir, world_dir, height=1.5):
     except cv2.error as err:
         print(err, "Conversion failed: Invalid image input, please check your file path")    
         return False
-
+    
     # Set all -1 (unknown) values to 255 (white/unoccupied)
-    # map_array[map_array < 0] = 255
-    map_array[map_array < 253] = 0
-    map_array[map_array >= 253] = 255
+    map_array[map_array < 0] = 255
+    
     print('Processing...')
     mesh = create_mesh_from_map(map_array, map_info, height)
 
@@ -259,7 +258,7 @@ def process_map(map_info, export_dir, world_dir, height=1.5):
     # Create world file
     world_data = XML_WORLD_TEMPLATE.format(model_template=model_template)
 
-    world_file = world_dir + f'{map_name}_world.sdf'
+    world_file = world_dir + f'{map_name}.sdf'
     with open(world_file, 'w') as f:
         f.write(world_data)
     
@@ -279,76 +278,72 @@ def process_maps(map_info_list, export_dir, world_dir, height=1.5):
     print(f'Conversion completed. Success: {success_count}, Failed: {fail_count}')
     return success_count, fail_count
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
+    
     parser.add_argument(
         '--map_dir', type=str, required=True,
         help='Directory containing YAML map files'
     )
-
+    
     parser.add_argument(
         '--model_dir', type=str, default=os.path.abspath('.'),
         help='Gazebo model output directory'
     )
-
+    
     parser.add_argument(
         '--world_dir', type=str, default=os.path.abspath('.'),
         help='World output directory'
     )
-
+    
     parser.add_argument(
         '--height', type=float, default=1.5,
         help='Height of the 3D map mesh'
     )
-
+    
     args = parser.parse_args()
-
+    
     # Check if map_dir exists
     if not os.path.isdir(args.map_dir):
         print(f"Error: Map directory {args.map_dir} not found or is not a directory.")
         sys.exit(1)
-
+    
     # Find all YAML files in the map_dir
     yaml_files = []
     for file in os.listdir(args.map_dir):
         if file.lower().endswith('.yaml') or file.lower().endswith('.yml'):
             yaml_files.append(os.path.join(args.map_dir, file))
-
+    
     if not yaml_files:
         print(f"Error: No YAML files found in {args.map_dir}")
         sys.exit(1)
-
+    
     print(f"Found {len(yaml_files)} YAML files in {args.map_dir}")
-
+    
     # Process the list of YAML files and create map_info_list
     map_info_list = []
     for yaml_file in yaml_files:
         try:
             with open(yaml_file, 'r') as stream:
                 map_info = yaml.safe_load(stream)
-
+                
                 # Add map_name based on the YAML filename
                 map_name = os.path.splitext(os.path.basename(yaml_file))[0]
                 map_info['map_name'] = map_name
-
+                
                 # Make image path absolute if it's relative
                 if not os.path.isabs(map_info['image']):
                     yaml_dir = os.path.dirname(os.path.abspath(yaml_file))
                     map_info['image'] = os.path.join(yaml_dir, map_info['image'])
-
+                
                 map_info_list.append(map_info)
                 print(f"Added map: {map_name}")
         except Exception as e:
             print(f"Error loading YAML file {yaml_file}: {str(e)}")
-
+    
     if not map_info_list:
         print("No valid map files found. Exiting.")
         sys.exit(1)
-
+    
     # Process all maps
     process_maps(map_info_list, args.model_dir, args.world_dir, args.height)
-
-
-if __name__ == "__main__":
-    main()
