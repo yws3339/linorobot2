@@ -109,6 +109,9 @@ def main():
 
             map_name = os.path.splitext(os.path.basename(yaml_file))[0]
             map_info['map_name'] = map_name
+            if os.path.exists(os.path.join(args.model_dir, map_name)):
+                print(f'Skipping map: {map_name} (model already exists in {args.model_dir})')
+                continue
 
             if not os.path.isabs(map_info['image']):
                 yaml_dir = os.path.dirname(os.path.abspath(yaml_file))
