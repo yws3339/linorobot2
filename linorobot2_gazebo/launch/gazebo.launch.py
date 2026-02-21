@@ -39,10 +39,6 @@ def generate_launch_description():
     urdf_path = PathJoinSubstitution(
         [FindPackageShare("linorobot2_description"), "urdf/robots", f"{robot_base}.urdf.xacro"]
     )
-    
-    world_path = PathJoinSubstitution(
-        [FindPackageShare("linorobot2_gazebo"), "worlds", "turtlebot3_world.sdf"]
-    )
 
     description_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_description'), 'launch', 'description.launch.py']
@@ -62,20 +58,31 @@ def generate_launch_description():
         ),
 
         DeclareLaunchArgument(
-            name='odom_topic', 
+            name='odom_topic',
             default_value='/odom',
             description='EKF out odometry topic'
         ),
-        
+
         DeclareLaunchArgument(
-            name='world', 
-            default_value=world_path,
-            description='Gazebo world'
+            name='world_name',
+            default_value='turtlebot3_world',
+            description='Gazebo world name — loads <world_name>.sdf from the linorobot2_gazebo worlds directory'
+        ),
+
+        DeclareLaunchArgument(
+            name='world_path',
+            default_value=[
+                FindPackageShare('linorobot2_gazebo'),
+                '/worlds/',
+                LaunchConfiguration('world_name'),
+                '.sdf'
+            ],
+            description='Full path to the Gazebo world SDF file (overrides world_name when set)'
         ),
 
         DeclareLaunchArgument(
             name='spawn_x', 
-            default_value='0.5',
+            default_value='0.0',
             description='Robot spawn position in X axis'
         ),
 
@@ -100,7 +107,7 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gazebo_launch_path),
             launch_arguments={
-                'gz_args': [' -r -s ', LaunchConfiguration('world')]
+                'gz_args': [' -r -s ', LaunchConfiguration('world_path')]
             }.items()
         ),
 

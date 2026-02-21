@@ -28,7 +28,10 @@ setup(
     license='Apache 2.0',
     entry_points={
         'console_scripts': [
-            'command_timeout = linorobot2_gazebo.command_timeout:main'
+            'command_timeout = linorobot2_gazebo.command_timeout:main',
+            'image_to_gazebo = linorobot2_gazebo.image_to_gazebo:main',
+            'map_to_gazebo = linorobot2_gazebo.map_to_gazebo:main',
+            'create_worlds_from_maps = linorobot2_gazebo.create_worlds_from_maps:main',
         ],
     },
 )
