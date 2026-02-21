@@ -200,7 +200,7 @@ class MapImageProcessor(tk.Tk):
                 self.display_image()
                 self.status_bar.config(text=f"Loaded: {os.path.basename(file_path)}")
             except Exception as e:
-                tk.messagebox.showerror("Error", f"Failed to load image: {str(e)}")
+                self._show_result_dialog("Error", f"Failed to load image: {str(e)}", is_error=True)
 
     def display_image(self):
         """Display the current image on the canvas"""
@@ -347,7 +347,7 @@ class MapImageProcessor(tk.Tk):
     def set_meters_per_pixel(self):
         """Start the process of setting meters per pixel by clicking two points"""
         if not self.current_image:
-            tk.messagebox.showinfo("Info", "Please load an image first.")
+            self._show_result_dialog("Info", "Please load an image first.")
             return
 
         self.click_mode = "meters_per_pixel"
@@ -409,11 +409,11 @@ class MapImageProcessor(tk.Tk):
     def set_origin(self):
         """Set the origin point on the image"""
         if not self.current_image:
-            tk.messagebox.showinfo("Info", "Please load an image first.")
+            self._show_result_dialog("Info", "Please load an image first.")
             return
 
         if self.__map_info["resolution"] is None:
-            tk.messagebox.showinfo("Info", "Please set meters per pixel first.")
+            self._show_result_dialog("Info", "Please set meters per pixel first.")
             return
 
         self.click_mode = "origin"
@@ -472,14 +472,14 @@ class MapImageProcessor(tk.Tk):
         dialog.transient(self)
 
         self.update_idletasks()
-        px = self.winfo_x() + self.winfo_width() // 2 - 175
-        py = self.winfo_y() + self.winfo_height() // 2 - 80
-        dialog.geometry(f"350x160+{px}+{py}")
+        px = self.winfo_x() + self.winfo_width() // 2 - 130
+        py = self.winfo_y() + self.winfo_height() // 2 - 55
+        dialog.geometry(f"260x110+{px}+{py}")
         dialog.wait_visibility()
         dialog.grab_set()
 
         color = "red" if is_error else "black"
-        ttk.Label(dialog, text=message, wraplength=320, justify=tk.LEFT,
+        ttk.Label(dialog, text=message, wraplength=230, justify=tk.LEFT,
                   foreground=color).pack(padx=15, pady=(15, 10))
         ttk.Button(dialog, text="OK", command=dialog.destroy).pack(pady=(0, 10))
 
@@ -665,11 +665,11 @@ class MapImageProcessor(tk.Tk):
     def generate_world(self):
         """Generate the world using the map_info and wall height"""
         if not self.current_image:
-            tk.messagebox.showinfo("Info", "Please load an image first.")
+            self._show_result_dialog("Info", "Please load an image first.")
             return
 
         if self.__map_info["resolution"] is None:
-            tk.messagebox.showinfo("Info", "Please set meters per pixel first.")
+            self._show_result_dialog("Info", "Please set meters per pixel first.")
             return
 
         # Get the wall height from the input field
