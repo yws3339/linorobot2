@@ -1,24 +1,150 @@
-## Hardware
+## Build
 
-### 1. Configure for hardware
+### 1. Configure docker/.env
 
-Edit `docker/.env` and set:
+Edit `docker/.env` and set `BASE_IMAGE` to match your target use case:
 
 ```
-BASE_IMAGE=hardware
+BASE_IMAGE=hardware      # Real robot hardware
+BASE_IMAGE=gazebo        # Gazebo simulation
+BASE_IMAGE=gazebo-cuda   # Gazebo simulation with CUDA support (recommended if you have an NVIDIA GPU)
+```
+
+**If you are working with real hardware**, also set the following:
+
+```
 ROBOT_BASE=<robot_type>      # 2wd, 4wd, or mecanum
 LASER_SENSOR=<laser_sensor>  # e.g. ld06, a1, ydlidar  (leave blank if not used)
 DEPTH_SENSOR=<depth_sensor>  # e.g. realsense, oakd     (leave blank if not used)
 ```
 
+After building, see the [Hardware](#hardware) section for post-build setup (udev rules, device mapping, and running the robot).
+
 ### 2. Build the image
+
+Run the build script, which automatically passes your host user's UID and GID so that files created inside the container are owned by your user:
 
 ```bash
 cd linorobot2/docker
-docker compose build
+./build
 ```
 
-### 3. Install udev rules on the host
+Alternatively, run the build manually:
+
+```bash
+HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose build
+```
+
+> Passing `HOST_UID` and `HOST_GID` is important when using the `dev` service, which mounts the host repository directory into the container. Without it, files created inside the container (e.g. build artifacts) will be owned by root on the host.
+
+---
+
+## Web Visualization
+
+All tmuxinator configs in `docker/profiles` (`dev`, `hardware`, `sim`) route GUI output — including Gazebo, RViz, and any other ROS GUI tools — to a virtual display at `:200`. A [KasmVNC](https://github.com/kasmtech/KasmVNC) server captures that display and streams it to a browser at:
+
+```
+http://<host_ip>:3000
+```
+
+On machines with an NVIDIA GPU, the `gazebo-cuda` image uses **VirtualGL** to intercept OpenGL calls from Gazebo and redirect them to the GPU for hardware-accelerated rendering. Without this, a headless server would fall back to software rendering, negating the GPU entirely.
+
+### Why run headless with a browser interface?
+
+This setup is particularly well-suited for **cloud simulation** on instances such as GCP or AWS, where no monitor is physically attached. The entire simulation stack — Gazebo, Nav2, sensor processing — runs on the remote machine. The browser is the only local interface needed, with no local ROS installation required. Compute can be scaled on demand simply by upgrading the instance, without being constrained by local hardware.
+
+It is also more efficient for **remote visualization** than the conventional approach. In a typical ROS setup, tools like RViz running on a remote machine receive raw topic data (point clouds, laser scans, images) over the network, which can be extremely bandwidth-intensive. With VNC, only a compressed video stream of the rendered display is transmitted — significantly reducing network usage, especially with data-heavy sensors like 3D LiDARs or RGBD cameras.
+
+---
+
+## Development
+
+The `dev` service mounts the entire `linorobot2` repository from the host into the container at `/home/ros/linorobot2_ws/src/linorobot2`. You can edit code on the host with your preferred editor and changes are immediately visible inside the container — no image rebuild needed. Once changes are made, rebuild the workspace from inside the container with:
+
+```bash
+colcon build
+```
+
+### Option 1: ./dev (single terminal, GUI forwarded to host)
+
+The `./dev` script starts the `dev` container if it is not already running, then opens an interactive bash shell inside it:
+
+```bash
+cd linorobot2/docker
+./dev
+```
+
+In this mode, GUI applications (e.g. RViz, rqt) are forwarded to the host machine's screen via the `$DISPLAY` environment variable.
+
+### Option 2: Tmuxinator (multi-pane, GUI at http://\<host_ip\>:3000)
+
+[Tmuxinator](https://github.com/tmuxinator/tmuxinator) manages named tmux sessions from a YAML config. In this project it acts like a launch file for multiple Docker services: a single command starts all the required containers and arranges their output into named panes inside one terminal. Each pane runs a different service — Gazebo, Nav2, KasmVNC, an interactive shell — so you have everything visible and reachable without juggling multiple SSH sessions or terminal windows.
+
+A Tmuxinator config at `profiles/dev.yml` opens a tmux window with four panes, each exec'd into the `dev` container, alongside a KasmVNC server. In this mode, any GUI application launched from inside the container appears in the browser at `http://<host_ip>:3000` (see [Web Visualization](#web-visualization)).
+
+**1. Install Tmuxinator**
+
+Follow the installation instructions [here](https://github.com/tmuxinator/tmuxinator?tab=readme-ov-file#installation).
+
+**2. Set the config path**
+
+```bash
+source linorobot2/docker/setup_tmux.bash
+```
+
+Verify the profiles are detected:
+
+```bash
+tmuxinator ls
+```
+
+Expected output:
+
+```
+tmuxinator projects:
+dev       hardware  sim
+```
+
+**3. Start the session**
+
+```bash
+tmuxinator start dev
+```
+
+This starts the `dev` container and KasmVNC, then opens a tmux window with four bash panes ready for development.
+
+Useful tmux key bindings:
+- `Ctrl+B` then arrow keys — navigate between panes
+- `Ctrl+B` then `D` — detach from the session (containers keep running)
+
+**4. Stop the session**
+
+```bash
+tmuxinator stop dev
+```
+
+Or to stop and remove all containers:
+
+```bash
+docker compose down
+```
+
+> **Inside the container** each pane behaves exactly like a native ROS 2 installation. You can run any ROS 2 command directly — for example:
+> ```bash
+> ros2 topic list
+> ros2 topic echo /cmd_vel
+> ros2 node list
+> ros2 run teleop_twist_keyboard teleop_twist_keyboard
+> ```
+> No extra setup is needed; the workspace is already sourced when the shell starts.
+
+---
+
+## Hardware
+
+> Before continuing, complete the [Build](#build) steps and ensure `ROBOT_BASE`, `LASER_SENSOR`, and `DEPTH_SENSOR` are set in `docker/.env`.
+
+### 1. Install udev rules on the host
 
 The Docker image already contains the sensor drivers (installed during build). To create
 the `/dev/<sensor>` symlinks on the **host** machine, run `install.bash` with `--udev-only`.
@@ -33,7 +159,7 @@ bash install.bash --laser <laser_sensor> --udev-only
 bash install.bash --depth <depth_sensor> --udev-only
 ```
 
-### 4. Reload udev rules
+### 2. Reload udev rules
 
 After installing, apply the rules without rebooting:
 
@@ -41,7 +167,7 @@ After installing, apply the rules without rebooting:
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-### 5. Verify the device symlinks
+### 3. Verify the device symlinks
 
 **Microcontroller:**
 
@@ -72,7 +198,7 @@ Some sensors create a `/dev` symlink on the host after the udev rule is installe
 | `ld06`, `ld19`, `stl27l` | `/dev/ldlidar` |
 | `a1`, `a2`, `a3`, ... | `/dev/rplidar` |
 
-### 6. Update the bringup service devices
+### 4. Update the bringup service devices
 
 Edit `docker/docker-compose.yaml` and update the `bringup` service's `devices` section
 to map the correct host devices into the container:
@@ -85,16 +211,28 @@ to map the correct host devices into the container:
       - /dev/ldlidar:/dev/ldlidar # Laser sensor (adjust to match your sensor symlink)
 ```
 
-### 7. Run the robot
+### 5. Run the robot
 
-#### 7.1. First, export the tmuxinator project path:
+**5.1. Set the tmuxinator config path:**
 
 ```bash
-cd linorobot2/docker/demos
-export TMUXINATOR_CONFIG=$PWD
+source linorobot2/docker/setup_tmux.bash
 ```
 
-#### 7.2. Start the robot:
+Verify the profiles are detected:
+
+```bash
+tmuxinator ls
+```
+
+Expected output:
+
+```
+tmuxinator projects:
+dev       hardware  sim
+```
+
+**5.2. Start the robot:**
 
 ```bash
 tmuxinator start hardware
@@ -112,57 +250,99 @@ tmuxinator stop hardware
 
 ## Simulation
 
-### 1. Configure docker/.env for simulation
+> Before continuing, complete the [Build](#build) steps with `BASE_IMAGE` set to `gazebo` or `gazebo-cuda`.
 
-Edit `docker/.env` and set the `BASE_IMAGE` variable to select the simulation environment:
+### 1. Install Tmuxinator
 
-```
-BASE_IMAGE=gazebo        # Standard Gazebo simulation
-BASE_IMAGE=gazebo-cuda   # Gazebo with CUDA support (recommended for machines with an NVIDIA GPU)
-```
+Follow the installation instructions for Tmuxinator [here](https://github.com/tmuxinator/tmuxinator?tab=readme-ov-file#installation).
 
-#### gazebo-cuda
+### 2. Set the tmuxinator config path
 
-The `gazebo-cuda` image enables CUDA support for Gazebo on machines equipped with an NVIDIA GPU. Gazebo is a graphics-intensive simulator — it renders 3D environments, lighting, and sensor data in real time. Running it on a GPU offloads the heavy rendering workload from the CPU, resulting in smoother simulation with higher frame rates and more stable physics-rendering synchronization, particularly when using depth sensors or camera plugins that produce large visual outputs.
-
-#### VirtualGL
-
-Since the default Docker setup is assumed to be **headless** (no physical display attached), the `gazebo-cuda` image also runs **VirtualGL**, which intercepts OpenGL calls from Gazebo and redirects them to the GPU for hardware-accelerated rendering. Without VirtualGL on a headless server, Gazebo would fall back to software rendering, negating the benefits of the GPU entirely.
-
-#### Headless setup and cloud simulation
-
-The headless setup allows the simulation to run on remote servers or cloud instances such as **GCP** or **AWS**, where no monitor is physically connected. The rendered display is forwarded to display `:200`, where a VNC server captures it and streams it to a web-based VNC client accessible from a browser at `http://<host_ip>:3000`.
-
-This approach is advantageous in two ways:
-
-- **Cloud simulation**: The entire simulation stack — Gazebo, Nav2, and sensor processing — runs on a remote server. The browser becomes the only local interface needed, with no requirement for a local ROS installation or display. Beyond accessibility, cloud simulation enables scaling compute on demand — larger worlds, more complex physics (e.g. fluid or water dynamics), or heavier sensor configurations can be handled simply by upgrading the cloud instance, without being constrained by the specs of physical hardware.
-
-- **Efficient remote visualization**: In a traditional setup, tools like RViz on a remote machine receive raw topic data (e.g. point clouds, laser scans) over the network, which can be highly bandwidth-intensive. With VNC, only the compressed video stream of the rendered display is transmitted — significantly reducing network usage, especially for data-heavy sensors like 3D LiDARs or RGBD cameras.
-
----
-
-### 2. Install Tmuxinator
-
-Follow the installation instructions for Tmuxinator [here](https://github.com/tmuxinator/tmuxinator?tab=readme-ov-file#installation)
-
-### 3. Running the demos using Tmuxinator and Docker
-
-#### 3.1. First, export the tmuxinator project path:
-
-```
-cd linorobot2/docker/demos
-export TMUXINATOR_CONFIG=$PWD
+```bash
+source linorobot2/docker/setup_tmux.bash
 ```
 
-#### 3.2. Running the Nav2 demo in Gazebo:
+Verify the profiles are detected:
+
+```bash
+tmuxinator ls
+```
+
+Expected output:
 
 ```
+tmuxinator projects:
+dev       hardware  sim
+```
+
+### 3. Run the Nav2 demo in Gazebo
+
+```bash
 tmuxinator start sim
 ```
 
 Once running, visualization is available at: `http://<host_ip>:3000`
 
 To stop the simulation, press `Ctrl+B` then `D` to detach from the tmux session, then run:
-```
+
+```bash
 tmuxinator stop sim
+```
+
+---
+
+## Custom Profiles
+
+Tmuxinator profiles live in `docker/profiles/`. Each profile defines which Docker services to start and how to arrange tmux panes. You can create your own profile to run a different combination of services or add extra panes.
+
+### Available docker-compose services
+
+| Service | Description |
+|---------|-------------|
+| `kasmvnc` | KasmVNC server — streams the virtual display (`:200`) to a browser at `http://<host_ip>:3000`. Should be included in every profile that uses GUI tools. |
+| `dev` | Development container — mounts the host `linorobot2` repo into the container so edits are reflected immediately without rebuilding the image. Runs `sleep infinity` so you can exec into it as needed. |
+| `gazebo` | Launches Gazebo with the world specified by `$WORLD` (default: `playground`). Requires `BASE_IMAGE=gazebo` or `gazebo-cuda`. |
+| `bringup` | Starts the robot hardware stack (micro-ROS agent, sensors). Requires `ROBOT_BASE`, `LASER_SENSOR`, and/or `DEPTH_SENSOR` set in `.env`, and the corresponding devices mapped. |
+| `slam` | Runs SLAM (online mapping). Set `SIM=true` when used with `gazebo`. |
+| `navigate` | Runs Nav2 navigation with a pre-built map. Set `SIM=true` when used with `gazebo`. |
+| `save-map` | Saves the current SLAM map to `linorobot2_navigation/maps/map.png`. Run this as a one-shot command while `slam` is active. |
+| `rviz-nav` | Opens RViz with the navigation config pre-loaded. |
+| `rviz` | Opens a bare RViz instance. |
+
+### Creating a new profile
+
+Copy the closest existing profile and edit it:
+
+```bash
+cp docker/profiles/sim.yml docker/profiles/my-profile.yml
+```
+
+A minimal profile looks like this:
+
+```yaml
+name: my-profile
+root: <%= ENV["TMUXINATOR_CONFIG"] %>
+
+pre_window:
+  - export DISPLAY=:200
+  - export SIM=true        # set any env vars your services need
+
+on_project_stop:
+  - docker compose down
+
+windows:
+  - main:
+      panes:
+        - docker compose up kasmvnc   # always include this for GUI
+        - docker compose up gazebo
+        - docker compose up slam
+        - docker compose up rviz-nav
+```
+
+Each entry under `panes` becomes one tmux pane running that command. Use `docker compose up <service>` to start a service in the foreground, or `docker compose exec <service> bash` to open an interactive shell into an already-running container.
+
+Start your profile with:
+
+```bash
+tmuxinator start my-profile
 ```
