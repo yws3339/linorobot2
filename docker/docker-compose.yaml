@@ -5,13 +5,14 @@ services:
       context: ../
       dockerfile: docker/Dockerfile
       args:
+        - VIRTUALGL_VER=${VIRTUALGL_VER:-3.1}
+        - HOST_UID=${HOST_UID:-1000}
+        - HOST_GID=${HOST_GID:-1000}
         - BASE_IMAGE=${BASE_IMAGE}
         - ROS_DISTRO=${ROS_DISTRO:-jazzy}
-        - HOST_ARCH=${HOST_ARCH:-amd64}
         - ROBOT_BASE=${ROBOT_BASE}
         - LASER_SENSOR=${LASER_SENSOR}
         - DEPTH_SENSOR=${DEPTH_SENSOR}
-        - VIRTUALGL_VER=${VIRTUALGL_VER:-3.1}
       target: final
 
   base:
@@ -27,13 +28,12 @@ services:
       - LINOROBOT2_BASE=${ROBOT_BASE} 
       - LINOROBOT2_LASER_SENSOR=${LASER_SENSOR} 
       - LINOROBOT2_DEPTH_SENSOR=${DEPTH_SENSOR} 
-      - DISPLAY=${DISPLAY} 
+      - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - $HOME/.Xauthority:/home/ros/.Xauthority
       - ../linorobot2_navigation/maps:/home/ros/linorobot2_ws/src/linorobot2/linorobot2_navigation/maps:rw)
-
 
   gazebo:
     container_name: gazebo
