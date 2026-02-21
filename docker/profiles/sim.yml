@@ -5,6 +5,7 @@ pre_window:
   - export SIM=true
   - export WORLD=turtlebot3_world
   - export RVIZ=true
+  - export SPAWN_X=0.5
 on_project_stop:
   - docker compose down
 windows:
