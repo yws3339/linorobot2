@@ -1,0 +1,42 @@
+site_name: linorobot2
+site_description: Build your own autonomous ROS2 robot with Nav2, SLAM Toolbox, and robot_localization
+site_url: https://linorobot.github.io/linorobot2
+repo_url: https://github.com/linorobot/linorobot2
+repo_name: linorobot/linorobot2
+
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.footer
+    - navigation.top
+    - content.code.copy
+
+nav:
+  - Overview: 01_overview.md
+  - Installation: 02_installation.md
+  - Base Controller: 03_base_controller.md
+  - Odometry: 04_odometry.md
+  - Setting Up Sensors: 05_sensors.md
+  - Setting Up Transforms: 06_transforms.md
+  - Mapping: 07_mapping.md
+  - Navigation: 08_navigation.md
+  - Docker: 09_docker.md
+  - Simulation Tools: 10_tools.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - tables
+  - toc:
+      permalink: true
