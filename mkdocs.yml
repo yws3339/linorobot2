@@ -17,16 +17,16 @@ theme:
     - content.code.copy
 
 nav:
-  - Overview: 01_overview.md
-  - Installation: 02_installation.md
-  - Base Controller: 03_base_controller.md
-  - Odometry: 04_odometry.md
-  - Setting Up Sensors: 05_sensors.md
-  - Setting Up Transforms: 06_transforms.md
-  - Mapping: 07_mapping.md
-  - Navigation: 08_navigation.md
-  - Docker: 09_docker.md
-  - Simulation Tools: 10_tools.md
+  - Overview: index.md
+  - Installation: installation.md
+  - Base Controller: base_controller.md
+  - Odometry: odometry.md
+  - Setting Up Sensors: sensors.md
+  - Setting Up Transforms: transforms.md
+  - Mapping: mapping.md
+  - Navigation: navigation.md
+  - Docker: docker.md
+  - Simulation Tools: tools.md
 
 markdown_extensions:
   - admonition
