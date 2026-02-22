@@ -60,10 +60,10 @@ ros2 launch linorobot2_navigation slam.launch.py
 For simulation on the host machine:
 
 ```bash
-ros2 launch linorobot2_navigation slam.launch.py sim:=true
+ros2 launch linorobot2_navigation slam.launch.py sim:=true rviz:=true
 ```
 
-**Terminal 3 — Visualize (from host machine):**
+**Terminal 3 — Visualize (from host machine ideal when working with real robot):**
 
 ```bash
 ros2 launch linorobot2_viz slam.launch.py

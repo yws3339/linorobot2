@@ -80,12 +80,12 @@ ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_n
 For simulation on the host machine:
 
 ```bash
-ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml sim:=true
+ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml sim:=true rviz:=true
 ```
 
 Nav2 will start and print `Timed out waiting for transform from base_link to map`. This is normal. It means AMCL is waiting for the robot's initial pose before it can publish the `map → odom` transform.
 
-**Terminal 3 — Visualize (from host machine):**
+**Terminal 3 — Visualize (from host machine ideal when working with real robot):**
 
 ```bash
 ros2 launch linorobot2_viz navigation.launch.py
