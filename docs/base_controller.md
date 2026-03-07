@@ -4,7 +4,7 @@
 
 The base controller is the bridge between the ROS2 world and your robot's wheels. When Nav2 wants the robot to move, it publishes a velocity command. Something has to take that command and turn it into actual motor signals, spinning wheels at the right speed in the right direction. That's the base controller's job.
 
-In linorobot2, the base controller lives on a microcontroller (such as a Pico) that is separate from the main robot computer. The microcontroller runs [micro-ROS](https://micro.ros.org/), a lightweight version of the ROS2 client library designed for resource-constrained embedded systems. This lets the microcontroller act as a first-class ROS2 node, publishing and subscribing to topics just like any other node on the network.
+In linorobot2, the base controller lives on a microcontroller (such as a Pico) that is separate from the main Robot Computer. The microcontroller runs [micro-ROS](https://micro.ros.org/), a lightweight version of the ROS2 client library designed for resource-constrained embedded systems. This lets the microcontroller act as a first-class ROS2 node, publishing and subscribing to topics just like any other node on the network.
 
 ![Base controller architecture](assets/microcontroller_architecture.png)
 
@@ -40,7 +40,7 @@ All firmware for the microcontroller is maintained in the [linorobot2_hardware](
 
 ## Booting Up
 
-In the next steps of this guide — mapping, navigation — you will always start by booting the robot first. Depending on your setup, you'll run one of the following:
+In the next steps of this guide — mapping, navigation — you will always start by booting the Robot Computer first. Depending on your setup, you'll run one of the following:
 
 **Physical Robot:**
 ```bash
@@ -56,7 +56,7 @@ The rest of this section covers what each of these actually does under the hood.
 
 ### Physical Robot
 
-When you run `bringup.launch.py`, the robot computer starts a micro-ROS agent that opens a serial connection to the microcontroller and bridges its topics into the ROS2 network.
+When you run `bringup.launch.py`, the Robot Computer starts a micro-ROS agent that opens a serial connection to the microcontroller and bridges its topics into the ROS2 network.
 
 Always wait for the agent to confirm a successful connection before running SLAM or navigation. You'll see something like:
 
