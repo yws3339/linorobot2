@@ -4,7 +4,7 @@
 
 The base controller is the bridge between the ROS2 world and your robot's wheels. When Nav2 wants the robot to move, it publishes a velocity command. Something has to take that command and turn it into actual motor signals, spinning wheels at the right speed in the right direction. That's the base controller's job.
 
-In linorobot2, the base controller lives on a microcontroller (such as a Teensy) that is separate from the main robot computer. The microcontroller runs [micro-ROS](https://micro.ros.org/), a lightweight version of the ROS2 client library designed for resource-constrained embedded systems. This lets the microcontroller act as a first-class ROS2 node, publishing and subscribing to topics just like any other node on the network.
+In linorobot2, the base controller lives on a microcontroller (such as a Pico) that is separate from the main robot computer. The microcontroller runs [micro-ROS](https://micro.ros.org/), a lightweight version of the ROS2 client library designed for resource-constrained embedded systems. This lets the microcontroller act as a first-class ROS2 node, publishing and subscribing to topics just like any other node on the network.
 
 ![Base controller architecture](assets/microcontroller_architecture.png)
 
@@ -36,7 +36,7 @@ All firmware for the microcontroller is maintained in the [linorobot2_hardware](
 
 - Wiring diagrams and hardware schematics
 - Firmware code for configuring your motor drivers and encoders
-- Instructions for flashing the firmware to your Teensy or compatible board
+- Instructions for flashing the firmware to your Pico or compatible board
 - Configuration for different robot base types (2WD, 4WD, Mecanum)
 
 ## Booting Up
