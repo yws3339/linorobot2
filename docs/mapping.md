@@ -39,13 +39,13 @@ If you get the warning `slam_toolbox: Message Filter dropping message: frame 'la
 
 Make sure the robot is fully booted and all topics (laser scan, odometry) are publishing before starting SLAM.
 
-**Terminal 1 — Boot the robot** (real robot):
+**Terminal 1 — Boot the robot** (Physical Robot):
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
 ```
 
-Or for simulation:
+Or for Simulated Robot:
 
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py
@@ -57,13 +57,13 @@ ros2 launch linorobot2_gazebo gazebo.launch.py
 ros2 launch linorobot2_navigation slam.launch.py
 ```
 
-For simulation on the host machine:
+For the Simulated Robot:
 
 ```bash
 ros2 launch linorobot2_navigation slam.launch.py sim:=true rviz:=true
 ```
 
-**Terminal 3 — Visualize (from host machine ideal when working with real robot):**
+**Terminal 3 — Visualize (from host machine ideal when working with Physical Robot):**
 
 ```bash
 ros2 launch linorobot2_viz slam.launch.py
