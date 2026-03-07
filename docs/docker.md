@@ -44,7 +44,7 @@ HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose build
 
 > Passing `HOST_UID` and `HOST_GID` is important when using the `dev` service, which mounts the host repository directory into the container. Without these, files created inside the container (e.g. build artifacts) will be owned by root on the host.
 
-After building, see the [Hardware](#hardware) section for post-build setup (udev rules, device mapping, and running the robot).
+After building the image and you're working on a Physical Robot, see the [Hardware](#hardware) section for post-build setup (udev rules, device mapping, and running the robot).
 
 ---
 
