@@ -64,7 +64,7 @@ With a map in hand, Nav2 can navigate the robot autonomously. This section gives
 
 ### 8. [Docker](09_docker.md)
 
-Covers running linorobot2 without a native ROS2 installation using Docker. Includes configuring the Docker environment for hardware, simulation, or CUDA-accelerated simulation; building the image; web-based visualization via KasmVNC (accessible in any browser at `http://<host_ip>:3000`); running the real robot or Gazebo simulation via Tmuxinator profiles; and creating custom profiles for your own workflow.
+Covers running linorobot2 without a native ROS2 installation using Docker. Includes configuring the Docker environment for hardware, simulation, or CUDA-accelerated simulation; building the image; web-based visualization via KasmVNC (accessible in any browser at `http://<host_ip>:3000`); running the Physical Robot or Simulated Robot via Tmuxinator profiles; and creating custom profiles for your own workflow.
 
 ---
 
@@ -89,8 +89,8 @@ Documents the two Gazebo world generation tools in `linorobot2_gazebo`. `image_t
 
 | Command | Purpose |
 |---------|---------|
-| `ros2 launch linorobot2_bringup bringup.launch.py` | Boot the real robot |
-| `ros2 launch linorobot2_gazebo gazebo.launch.py` | Start Gazebo simulation |
+| `ros2 launch linorobot2_bringup bringup.launch.py` | Boot the Physical Robot |
+| `ros2 launch linorobot2_gazebo gazebo.launch.py` | Start Simulated Robot |
 | `ros2 launch linorobot2_navigation slam.launch.py` | Start SLAM (mapping) |
 | `ros2 launch linorobot2_navigation navigation.launch.py map:=<map>.yaml` | Start Nav2 (navigation) |
 | `ros2 launch linorobot2_viz slam.launch.py` | Visualize SLAM from host machine |

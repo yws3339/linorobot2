@@ -39,7 +39,7 @@ If you get the warning `slam_toolbox: Message Filter dropping message: frame 'la
 
 Make sure the robot is fully booted and all topics (laser scan, odometry) are publishing before starting SLAM.
 
-**Terminal 1 — Boot the robot** (Physical Robot):
+**Terminal 1: Boot the robot** (Physical Robot):
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
@@ -51,7 +51,7 @@ Or for Simulated Robot:
 ros2 launch linorobot2_gazebo gazebo.launch.py
 ```
 
-**Terminal 2 — Start SLAM Toolbox:**
+**Terminal 2: Start SLAM Toolbox:**
 
 ```bash
 ros2 launch linorobot2_navigation slam.launch.py
@@ -63,7 +63,7 @@ For the Simulated Robot:
 ros2 launch linorobot2_navigation slam.launch.py sim:=true rviz:=true
 ```
 
-**Terminal 3 — Visualize (from host machine ideal when working with Physical Robot):**
+**Terminal 3: Visualize (from host machine, ideally when working with Physical Robot):**
 
 ```bash
 ros2 launch linorobot2_viz slam.launch.py
@@ -71,7 +71,7 @@ ros2 launch linorobot2_viz slam.launch.py
 
 In RViz you should see the laser scan (colored dots) and the map building up as the robot moves.
 
-**Terminal 4 — Drive the robot:**
+**Terminal 4: Drive the robot:**
 
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
@@ -91,8 +91,8 @@ ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args -p save_map_time
 ```
 
 Replace `<map_name>` with a descriptive name (e.g., `office`, `lab`, `home`). This creates two files:
-- `<map_name>.yaml` — metadata: resolution, origin, and the image file location
-- `<map_name>.pgm` — the map image (white = free, black = obstacle, grey = unknown)
+- `<map_name>.yaml`: metadata (resolution, origin, and the image file location)
+- `<map_name>.pgm`: the map image (white = free, black = obstacle, grey = unknown)
 
 Keep both files in the same directory. The YAML references the PGM by path.
 

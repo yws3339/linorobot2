@@ -40,7 +40,7 @@ All firmware for the microcontroller is maintained in the [linorobot2_hardware](
 
 ## Booting Up
 
-In the next steps of this guide — mapping, navigation — you will always start by booting the Robot Computer first. Depending on your setup, you'll run one of the following:
+In the next steps of this guide (mapping, navigation), you will always start by booting the Robot Computer first. Depending on your setup, you'll run one of the following:
 
 **Physical Robot:**
 ```bash
@@ -81,9 +81,9 @@ ros2 launch linorobot2_bringup bringup.launch.py base_serial_port:=/dev/ttyUSB0 
 ros2 launch linorobot2_bringup bringup.launch.py micro_ros_transport:=udp4 micro_ros_port:=8888
 ```
 
-### Simulation
+### Simulated Robot
 
-In Gazebo, there is no physical microcontroller — but the same interface is preserved. Gazebo uses **plugins** defined in the robot's URDF to simulate the base controller and IMU, publishing on the same topics so the rest of the stack (EKF, SLAM, Nav2) works identically.
+In Gazebo, there is no physical microcontroller, but the same interface is preserved. Gazebo uses **plugins** defined in the robot's URDF to simulate the base controller and IMU, publishing on the same topics so the rest of the stack (EKF, SLAM, Nav2) works identically.
 
 #### Differential Drive Controller
 
@@ -124,7 +124,7 @@ The simulated IMU is defined in `linorobot2_description/urdf/sensors/imu.urdf.xa
 </sensor>
 ```
 
-It publishes directly to `imu/data` at 50 Hz — the same topic the EKF reads in `ekf.yaml`. Both the diff drive controller and the IMU are already included in every robot URDF under `linorobot2_description/urdf/robots/`, so no extra configuration is needed to run the simulation.
+It publishes directly to `imu/data` at 50 Hz, the same topic the EKF reads in `ekf.yaml`. Both the diff drive controller and the IMU are already included in every robot URDF under `linorobot2_description/urdf/robots/`, so no extra configuration is needed to run the Simulated Robot.
 
 ## Magnetometer Support (Physical Robot)
 

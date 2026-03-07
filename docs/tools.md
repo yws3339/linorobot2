@@ -1,6 +1,6 @@
 # Create custom Gazebo worlds from images, floor plans, or occupancy grid map
 
-linorobot2 includes two tools for generating Gazebo worlds from real-world sources: a floor plan image or a SLAM-generated map. Both produce a Gazebo world that reflects the actual geometry of your physical environment, so you can develop and test ROS2 applications in simulation with full confidence in the obstacle layout before deploying to the real robot.
+linorobot2 includes two tools for generating Gazebo worlds from real-world sources: a floor plan image or a SLAM-generated map. Both produce a Gazebo world that reflects the actual geometry of your physical environment, so you can develop and test ROS2 applications in simulation with full confidence in the obstacle layout before deploying to the Physical Robot.
 
 ---
 
@@ -28,7 +28,7 @@ Follow the steps below in order.
 
 Click **Load Image** and select your floor plan file (PNG, JPG, JPEG, BMP, GIF, or TIFF).
 
-The file dialog opens at `linorobot2_gazebo/linorobot2_gazebo/images/` by default — place your floor plan images there for easy access.
+The file dialog opens at `linorobot2_gazebo/linorobot2_gazebo/images/` by default. Place your floor plan images there for easy access.
 
 The image is displayed on the canvas. X (red, pointing right) and Y (green, pointing up) reference axes are drawn in the bottom-left corner.
 
@@ -114,7 +114,7 @@ ros2 launch linorobot2_gazebo gazebo.launch.py world_path:=/absolute/path/to/my_
 
 ## create_worlds_from_maps
 
-A batch CLI tool that converts all SLAM maps in `linorobot2_navigation/maps/` into Gazebo worlds in one command. It is the non-interactive counterpart to `image_to_gazebo` — useful for keeping simulation worlds in sync after a mapping session or when maps have been updated.
+A batch CLI tool that converts all SLAM maps in `linorobot2_navigation/maps/` into Gazebo worlds in one command. It is the non-interactive counterpart to `image_to_gazebo`, useful for keeping simulation worlds in sync after a mapping session or when maps have been updated.
 
 For each YAML file it reads the occupancy grid image, extrudes the occupied cells into a 3D wall mesh, and writes the model SDF and world SDF.
 
@@ -152,8 +152,8 @@ ros2 launch linorobot2_gazebo gazebo.launch.py world_name:=<map_name>
 
 ### Typical Workflow
 
-1. Drive your real robot and build a map with SLAM Toolbox (see [Mapping](07_mapping.md)).
+1. Drive your Physical Robot and build a map with SLAM Toolbox (see [Mapping](07_mapping.md)).
 2. Save the map to `linorobot2_navigation/maps/`.
 3. Run `create_worlds_from_maps` to generate the Gazebo world.
 4. Rebuild the workspace and launch the world in Gazebo.
-5. Develop and test your Nav2 application in the simulation, then deploy to the real robot.
+5. Develop and test your Nav2 application with the Simulated Robot, then deploy to the Physical Robot.

@@ -8,9 +8,9 @@ Think of it like navigating with a car's trip odometer: you know how fast you've
 
 ## How Odometry Is Computed
 
-### Real Robot
+### Physical Robot
 
-On the real robot, odometry is calculated inside the microcontroller firmware. The full implementation is in [odometry.cpp](https://github.com/linorobot/linorobot2_hardware/blob/jazzy/firmware/lib/odometry/odometry.cpp). In summary:
+On the Physical Robot, odometry is calculated inside the microcontroller firmware. The full implementation is in [odometry.cpp](https://github.com/linorobot/linorobot2_hardware/blob/jazzy/firmware/lib/odometry/odometry.cpp). In summary:
 
 1. Encoder pulses are counted for each wheel since the last update.
 2. Pulse counts are converted to wheel displacement using the wheel circumference and encoder resolution.
@@ -19,7 +19,7 @@ On the real robot, odometry is calculated inside the microcontroller firmware. T
 
 The computed odometry is published to `odom/unfiltered` via micro-ROS.
 
-### Simulation
+### Simulated Robot
 
 In Gazebo, the `gz-sim-diff-drive-system` plugin in `linorobot2_description/urdf/controllers/diff_drive.urdf.xacro` handles this. It reads the simulated joint states of the left and right wheel joints, applies the same differential drive kinematics using the configured `wheel_separation` and `wheel_radius`, and publishes the result to `odom/unfiltered` at 50 Hz. The upstream consumers (EKF, SLAM, Nav2) see no difference.
 
@@ -29,9 +29,9 @@ In ROS2, odometry is published as a `nav_msgs/Odometry` message, which contains 
 
 Wheel odometry works well in short bursts, but it accumulates errors over time. The main culprits are:
 
-- **Wheel slip** — wheels sliding on smooth or slippery surfaces produce encoder counts that don't correspond to actual motion.
-- **Uneven surfaces** — bumps and ramps tilt the robot, so straight-line motion in 3D gets projected incorrectly onto the 2D floor plane.
-- **Mechanical tolerances** — small differences in wheel diameter or encoder resolution cause the robot to drift even when driving in a straight line.
+- **Wheel slip:** wheels sliding on smooth or slippery surfaces produce encoder counts that don't correspond to actual motion.
+- **Uneven surfaces:** bumps and ramps tilt the robot, so straight-line motion in 3D gets projected incorrectly onto the 2D floor plane.
+- **Mechanical tolerances:** small differences in wheel diameter or encoder resolution cause the robot to drift even when driving in a straight line.
 
 Over a long mapping session or navigation run, these errors accumulate. The robot thinks it's at position X, but it's actually somewhere slightly different. SLAM Toolbox and AMCL can compensate for some of this using their sensor matching, but giving them a better starting estimate makes their job much easier.
 
@@ -86,11 +86,11 @@ ekf_filter_node:
 
 **Key parameters explained:**
 
-- `frequency: 50.0` — The EKF runs at 50 Hz, producing filtered odometry 50 times per second.
-- `two_d_mode: true` — Tells the filter to ignore roll and pitch, appropriate for ground robots.
-- `publish_tf: true` — The EKF publishes the `odom → base_footprint` transform directly, which is required by Nav2.
-- `odom0: odom/unfiltered` — The raw wheel odometry input, published directly by the microcontroller firmware (real robot) or the Gazebo diff drive plugin (simulation).
-- `imu0: imu/data` — The IMU input. By default this is the raw IMU data; if you enable the Madgwick filter, this becomes the orientation-fused output.
+- `frequency: 50.0`: The EKF runs at 50 Hz, producing filtered odometry 50 times per second.
+- `two_d_mode: true`: Tells the filter to ignore roll and pitch, appropriate for ground robots.
+- `publish_tf: true`: The EKF publishes the `odom → base_footprint` transform directly, which is required by Nav2.
+- `odom0: odom/unfiltered`: The raw wheel odometry input, published directly by the microcontroller firmware (Physical Robot) or the Gazebo diff drive plugin (Simulated Robot).
+- `imu0: imu/data`: The IMU input. By default this is the raw IMU data; if you enable the Madgwick filter, this becomes the orientation-fused output.
 - The `_config` arrays select which states to use from each sensor. The `true` entries tell the EKF which measurements to trust from each source.
 
 ### Topics

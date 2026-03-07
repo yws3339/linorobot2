@@ -59,7 +59,7 @@ colcon build
 
 You need a map saved from the [Mapping](07_mapping.md) step before proceeding.
 
-**Terminal 1 — Boot the robot** (Physical Robot):
+**Terminal 1: Boot the robot** (Physical Robot):
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
@@ -71,7 +71,7 @@ Or for Simulated Robot:
 ros2 launch linorobot2_gazebo gazebo.launch.py
 ```
 
-**Terminal 2 — Launch Nav2:**
+**Terminal 2: Launch Nav2:**
 
 ```bash
 ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml
@@ -85,7 +85,7 @@ ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_n
 
 Nav2 will start and print `Timed out waiting for transform from base_link to map`. This is normal. It means AMCL is waiting for the robot's initial pose before it can publish the `map → odom` transform.
 
-**Terminal 3 — Visualize (from host machine ideal when working with Physical Robot):**
+**Terminal 3: Visualize (from host machine, ideally when working with Physical Robot):**
 
 ```bash
 ros2 launch linorobot2_viz navigation.launch.py
@@ -116,12 +116,12 @@ For a detailed walkthrough of the RViz navigation interface, see the [Nav2 tutor
 
 ## Troubleshooting
 
-**`Invalid frame ID "map"` errors** — Nav2 is running but AMCL hasn't localized yet. Set the 2D Pose Estimate in RViz.
+**`Invalid frame ID "map"` errors:** Nav2 is running but AMCL hasn't localized yet. Set the 2D Pose Estimate in RViz.
 
-**Robot drives into walls** — The footprint is too small. Increase `robot_radius` or widen the polygon footprint.
+**Robot drives into walls:** The footprint is too small. Increase `robot_radius` or widen the polygon footprint.
 
-**Robot refuses to move toward a goal** — The costmap inflation radius may be too large for tight spaces. Check `inflation_radius` in `navigation.yaml`.
+**Robot refuses to move toward a goal:** The costmap inflation radius may be too large for tight spaces. Check `inflation_radius` in `navigation.yaml`.
 
-**Robot gets stuck spinning** — This is a recovery behavior. It happens when the local planner can't find a clear path. Try clearing the costmaps or sending a different goal.
+**Robot gets stuck spinning:** This is a recovery behavior. It happens when the local planner can't find a clear path. Try clearing the costmaps or sending a different goal.
 
-**Changes to navigation.yaml don't take effect** — Rebuild the workspace with `colcon build` and relaunch.
+**Changes to navigation.yaml don't take effect:** Rebuild the workspace with `colcon build` and relaunch.

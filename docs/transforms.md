@@ -78,9 +78,9 @@ For example, the default 2WD configuration:
 ```
 
 The `xyz` values are in meters, measured from `base_link`:
-- `x` — forward (positive) / backward (negative) from center
-- `y` — left (positive) / right (negative) from center
-- `z` — height above the ground plane
+- `x`: forward (positive) / backward (negative) from center
+- `y`: left (positive) / right (negative) from center
+- `z`: height above the ground plane
 
 The `rpy` values are rotation in radians (roll, pitch, yaw). For a forward-facing sensor mounted level, these are all `0 0 0`.
 

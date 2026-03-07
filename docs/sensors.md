@@ -6,12 +6,12 @@ Odometry tells the robot where it *thinks* it is based on how far its wheels hav
 
 linorobot2 uses two primary sensor categories:
 
-- **LaserScan (2D lidar)** — produces a 360° ring of distance measurements on a flat plane. This is the primary sensor for obstacle detection and SLAM.
-- **Depth camera (RGBD)** — produces a 3D point cloud and/or depth image. Useful for detecting obstacles that a floor-level lidar misses (like table legs above the scan plane).
+- **LaserScan (2D lidar):** produces a 360° ring of distance measurements on a flat plane. This is the primary sensor for obstacle detection and SLAM.
+- **Depth camera (RGBD):** produces a 3D point cloud and/or depth image. Useful for detecting obstacles that a floor-level lidar misses (like table legs above the scan plane).
 
 Both sensor types publish data that Nav2 and SLAM Toolbox consume directly.
 
-## Real Hardware Setup
+## Physical Robot Setup
 
 On a physical robot, sensors are configured during installation via the `install.bash` script's `--laser` and `--depth` arguments. The script installs the appropriate ROS2 driver packages and sets environment variables that the bringup launch files use to start the correct driver at boot.
 
@@ -52,7 +52,7 @@ Sensors marked with `*` are depth cameras used as laser sensors. When configured
 | `oakdlite` | [OAK-D Lite](https://shop.luxonis.com/collections/oak-cameras-1/products/oak-d-lite-1) |
 | `oakdpro` | [OAK-D Pro](https://shop.luxonis.com/collections/oak-cameras-1/products/oak-d-pro) |
 
-## Simulation
+## Simulated Robot
 
 In Gazebo, sensors are defined in URDF/xacro files and are already configured for each robot type. You don't need to install any additional drivers. Gazebo simulates the sensors and publishes on the same topics as real hardware.
 
@@ -60,20 +60,20 @@ In Gazebo, sensors are defined in URDF/xacro files and are already configured fo
 
 Sensor definitions live in `linorobot2_description/urdf/sensors/`:
 
-**`generic_laser.urdf.xacro`** — Simulates a 360° 2D lidar:
+**`generic_laser.urdf.xacro`:** Simulates a 360° 2D lidar:
 - 360 rays, full 360° sweep
 - Range: 0.08 m to 12.0 m
 - Update rate: 10 Hz
 - Publishes to: `/scan` (topic name: `scan`, frame ID: `laser`)
 
-**`depth_sensor.urdf.xacro`** — Simulates an RGBD camera:
+**`depth_sensor.urdf.xacro`:** Simulates an RGBD camera:
 - Resolution: 640 × 480
 - Update rate: 30 Hz
 - Horizontal FOV: ~86°
 - Depth range: 0.3 m to 100 m
 - Publishes to: `/camera` topics
 
-**`imu.urdf.xacro`** — Simulates an IMU:
+**`imu.urdf.xacro`:** Simulates an IMU:
 - Publishes to: `/imu/data` at 50 Hz
 
 ### How Sensors Are Included
@@ -117,16 +117,16 @@ More details on how these poses relate to the TF tree are covered in the [Transf
 
 ## Published Topics
 
-After bringup (real robot) or Gazebo launch (simulation), the following sensor topics should be active:
+After bringup (Physical Robot) or Gazebo launch (Simulated Robot), the following sensor topics should be active:
 
 | Topic | Type | Source |
 |-------|------|--------|
 | `/scan` | `sensor_msgs/LaserScan` | 2D lidar or depth-to-laser conversion |
 | `/camera/image_raw` | `sensor_msgs/Image` | Depth camera RGB image |
 | `/camera/depth/image_raw` | `sensor_msgs/Image` | Depth camera depth image |
-| `/imu/data` | `sensor_msgs/Imu` | IMU data. Published directly by the firmware (no magnetometer) or by the Madgwick filter (magnetometer enabled). In simulation, published by `imu.urdf.xacro` |
-| `/imu/data_raw` | `sensor_msgs/Imu` | Raw IMU acceleration and gyro data (real robot only, when magnetometer is enabled) |
-| `/imu/mag` | `sensor_msgs/MagneticField` | Magnetometer data (real robot only, when magnetometer is present) |
+| `/imu/data` | `sensor_msgs/Imu` | IMU data. Published directly by the firmware (no magnetometer) or by the Madgwick filter (magnetometer enabled). In the Simulated Robot, published by `imu.urdf.xacro` |
+| `/imu/data_raw` | `sensor_msgs/Imu` | Raw IMU acceleration and gyro data (Physical Robot only, when magnetometer is enabled) |
+| `/imu/mag` | `sensor_msgs/MagneticField` | Magnetometer data (Physical Robot only, when magnetometer is present) |
 
 You can verify a sensor is publishing correctly with:
 
