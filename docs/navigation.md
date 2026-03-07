@@ -59,13 +59,13 @@ colcon build
 
 You need a map saved from the [Mapping](07_mapping.md) step before proceeding.
 
-**Terminal 1 — Boot the robot** (real robot):
+**Terminal 1 — Boot the robot** (Physical Robot):
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
 ```
 
-Or for simulation:
+Or for Simulated Robot:
 
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py
@@ -77,7 +77,7 @@ ros2 launch linorobot2_gazebo gazebo.launch.py
 ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml
 ```
 
-For simulation on the host machine:
+For Simulated Robot:
 
 ```bash
 ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml sim:=true rviz:=true
@@ -85,7 +85,7 @@ ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_n
 
 Nav2 will start and print `Timed out waiting for transform from base_link to map`. This is normal. It means AMCL is waiting for the robot's initial pose before it can publish the `map → odom` transform.
 
-**Terminal 3 — Visualize (from host machine ideal when working with real robot):**
+**Terminal 3 — Visualize (from host machine ideal when working with Physical Robot):**
 
 ```bash
 ros2 launch linorobot2_viz navigation.launch.py
@@ -112,7 +112,7 @@ Nav2 will:
 3. Avoid any new obstacles detected along the way
 4. Declare success when it arrives within the goal tolerance (default: 35 cm)
 
-For a detailed walkthrough of the RViz navigation interface, see the [Nav2 tutorial on real robot navigation](https://docs.nav2.org/tutorials/docs/navigation2_on_real_turtlebot3.html#initialize-the-location-of-turtlebot-3).
+For a detailed walkthrough of the RViz navigation interface, see the [Nav2 tutorial on Physical Robot navigation](https://docs.nav2.org/tutorials/docs/navigation2_on_real_turtlebot3.html#initialize-the-location-of-turtlebot-3).
 
 ## Troubleshooting
 
