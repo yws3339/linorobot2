@@ -47,7 +47,7 @@ In the next steps of this guide — mapping, navigation — you will always star
 ros2 launch linorobot2_bringup bringup.launch.py
 ```
 
-**Simulation:**
+**Simulated Robot:**
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py
 ```
