@@ -1,4 +1,4 @@
-# Simulation Tools
+# Create custom Gazebo worlds from images, floor plans, or occupancy grid map
 
 linorobot2 includes two tools for generating Gazebo worlds from real-world sources: a floor plan image or a SLAM-generated map. Both produce a Gazebo world that reflects the actual geometry of your physical environment, so you can develop and test ROS2 applications in simulation with full confidence in the obstacle layout before deploying to the real robot.
 
