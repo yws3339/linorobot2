@@ -87,7 +87,7 @@ This package is kept separate from the main installation to keep the robot compu
 
 ---
 
-## Simulation
+## Simulated Robot
 
 The simulation runs on your host/development machine and does not require a physical robot at all. It's a great way to tune Nav2 parameters and test your configuration before deploying to hardware.
 
