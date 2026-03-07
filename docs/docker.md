@@ -13,12 +13,12 @@ All commands below are run from the **repository root** unless a `cd` step expli
 Edit `docker/.env` and set `BASE_IMAGE` to match your target use case:
 
 ```
-BASE_IMAGE=hardware      # Real robot hardware
-BASE_IMAGE=gazebo        # Gazebo simulation
+BASE_IMAGE=hardware      # Physical Robot
+BASE_IMAGE=gazebo        # Simulated Robot
 BASE_IMAGE=gazebo-cuda   # Gazebo simulation with CUDA support (recommended if you have an NVIDIA GPU)
 ```
 
-If you are working with real hardware, also set the following:
+If you are working with Physical Robot, also set the following:
 
 ```
 ROBOT_BASE=<robot_type>      # 2wd, 4wd, or mecanum
