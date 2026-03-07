@@ -106,6 +106,7 @@ Once the robot is localized, you can send it anywhere on the map:
 In RViz, click **"2D Goal Pose"**, then click on the map where you want the robot to go and drag to set the desired final orientation.
 
 Nav2 will:
+
 1. Plan a path from the current position to the goal
 2. Begin following the path
 3. Avoid any new obstacles detected along the way
