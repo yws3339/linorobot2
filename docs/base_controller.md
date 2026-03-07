@@ -37,7 +37,7 @@ All firmware for the microcontroller is maintained in the [linorobot2_hardware](
 - Wiring diagrams and hardware schematics
 - Firmware code for configuring your motor drivers and encoders
 - Instructions for flashing the firmware to your Pico or compatible board
-- Configuration for different robot base types (2WD, 4WD, Mecanum)
+- Configuration for different robot base types (2WD, 4WD, Mecanum) as well as for different motor controllers and sensors
 
 ## Booting Up
 
