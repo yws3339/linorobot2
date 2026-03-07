@@ -34,7 +34,6 @@ In addition to the drive wheels, the microcontroller also reads an onboard IMU (
 
 All firmware for the microcontroller is maintained in the [linorobot2_hardware](https://github.com/linorobot/linorobot2_hardware) repository. That's where you'll find:
 
-- Wiring diagrams and hardware schematics
 - Firmware code for configuring your motor drivers and encoders
 - Instructions for flashing the firmware to your Pico or compatible board
 - Configuration for different robot base types (2WD, 4WD, Mecanum) as well as for different motor controllers and sensors
