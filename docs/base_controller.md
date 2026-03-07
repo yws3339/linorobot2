@@ -42,7 +42,7 @@ All firmware for the microcontroller is maintained in the [linorobot2_hardware](
 
 In the next steps of this guide — mapping, navigation — you will always start by booting the robot first. Depending on your setup, you'll run one of the following:
 
-**Real robot:**
+**Physical Robot:**
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
 ```
@@ -54,7 +54,7 @@ ros2 launch linorobot2_gazebo gazebo.launch.py
 
 The rest of this section covers what each of these actually does under the hood.
 
-### Real Robot
+### Physical Robot
 
 When you run `bringup.launch.py`, the robot computer starts a micro-ROS agent that opens a serial connection to the microcontroller and bridges its topics into the ROS2 network.
 
@@ -103,7 +103,7 @@ The drive controller is defined in `linorobot2_description/urdf/controllers/diff
 </plugin>
 ```
 
-This plugin does what the microcontroller firmware does on the real robot:
+This plugin does what the microcontroller firmware does on the Physical Robot:
 - Subscribes to `cmd_vel` for incoming `Twist` velocity commands
 - Converts them to per-wheel velocities using the kinematic model, driven by `wheel_separation` and `wheel_radius`
 - Publishes wheel odometry to `odom/unfiltered` at 50 Hz
@@ -125,7 +125,7 @@ The simulated IMU is defined in `linorobot2_description/urdf/sensors/imu.urdf.xa
 
 It publishes directly to `imu/data` at 50 Hz — the same topic the EKF reads in `ekf.yaml`. Both the diff drive controller and the IMU are already included in every robot URDF under `linorobot2_description/urdf/robots/`, so no extra configuration is needed to run the simulation.
 
-## Magnetometer Support (Real Robot)
+## Magnetometer Support (Physical Robot)
 
 The IMU includes a magnetometer that can provide absolute heading (compass direction). How IMU data reaches the EKF depends on whether the magnetometer is enabled.
 
