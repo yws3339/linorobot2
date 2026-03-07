@@ -71,8 +71,6 @@ Sensors marked with `*` are depth cameras. When used as a laser sensor, the laun
 | `oakdlite` | [OAK-D Lite](https://shop.luxonis.com/collections/oak-cameras-1/products/oak-d-lite-1) |
 | `oakdpro` | [OAK-D Pro](https://shop.luxonis.com/collections/oak-cameras-1/products/oak-d-pro) |
 
-For a manual installation without the script, follow the [ROBOT_INSTALLATION.md](../ROBOT_INSTALLATION.md) guide.
-
 ### Host Machine: RVIZ (Remote Visualization)
 
 When working with a physical robot, you'll want to visualize what's happening from a separate machine (the laser scan, the map being built, and the robot's pose) without running a full simulation. Install [linorobot2_viz](https://github.com/linorobot/linorobot2_viz) on your host machine for this purpose:
