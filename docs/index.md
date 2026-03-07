@@ -22,7 +22,7 @@ Here's the full path from hardware to autonomous navigation, in order:
 
 ### 1. [Installation](02_installation.md)
 
-Get linorobot2 installed on both your robot computer and your host/development machine. Covers the one-command `install.bash` setup script, the supported robot types and sensors, and how to install the RViz visualization package for remote debugging. Also covers the Gazebo simulation setup and the Docker option for host machines not running Ubuntu 24.04.
+Get linorobot2 installed on both your robot computer and your host/development machine. Covers the one-command `install.bash` setup script, the supported robot types and sensors, points to documentation on how to install the on-robot firmware for motor control, and how to install the RViz visualization package for remote debugging. Also covers the Gazebo simulation setup and the Docker option for host machines not running Ubuntu 24.04.
 
 ---
 
