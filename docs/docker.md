@@ -26,8 +26,6 @@ LASER_SENSOR=<laser_sensor>  # e.g. ld06, a1, ydlidar  (leave blank if not used)
 DEPTH_SENSOR=<depth_sensor>  # e.g. realsense, oakd     (leave blank if not used)
 ```
 
-After building, see the [Hardware](#hardware) section for post-build setup (udev rules, device mapping, and running the robot).
-
 ### 2. Build the image
 
 Run the build script, which automatically passes your host user's UID and GID so that files created inside the container are owned by your user:
@@ -45,6 +43,8 @@ HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose build
 ```
 
 > Passing `HOST_UID` and `HOST_GID` is important when using the `dev` service, which mounts the host repository directory into the container. Without these, files created inside the container (e.g. build artifacts) will be owned by root on the host.
+
+After building, see the [Hardware](#hardware) section for post-build setup (udev rules, device mapping, and running the robot).
 
 ---
 
