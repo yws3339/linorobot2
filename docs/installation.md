@@ -1,12 +1,12 @@
 # Installation
 
-This guide walks you through installing linorobot2, whether you're setting up a real robot or running the Gazebo simulation on your desktop.
+This guide walks you through installing linorobot2, whether you're setting up a Physical Robot or running the Gazebo simulation on your desktop.
 
-## Real Robot
+## Physical Robot
 
 ### Prerequisites
 
-The robot computer needs ROS2 Jazzy. If you haven't installed it yet, use the [ros2me](https://github.com/linorobot/ros2me) installer script, which has been tested on x86 and ARM boards including Raspberry Pi 4 and Nvidia Jetson series.
+The Robot Computer needs ROS2 Jazzy. If you haven't installed it yet, use the [ros2me](https://github.com/linorobot/ros2me) installer script, which has been tested on x86 and ARM boards including Raspberry Pi 4 and Nvidia Jetson series.
 
 ### Hardware and Robot Firmware
 
@@ -73,7 +73,7 @@ Sensors marked with `*` are depth cameras. When used as a laser sensor, the laun
 
 ### Host Machine: RVIZ (Remote Visualization)
 
-When working with a physical robot, you'll want to visualize what's happening from a separate machine (the laser scan, the map being built, and the robot's pose) without running a full simulation. Install [linorobot2_viz](https://github.com/linorobot/linorobot2_viz) on your host machine for this purpose:
+When working with a Physical Robot, you'll want to visualize what's happening from a separate machine (the laser scan, the map being built, and the robot's pose) without running a full simulation. Install [linorobot2_viz](https://github.com/linorobot/linorobot2_viz) on your host machine for this purpose:
 
 ```bash
 cd <host_machine_ws>
@@ -83,13 +83,13 @@ colcon build
 source install/setup.bash
 ```
 
-This package is kept separate from the main installation to keep the robot computer lean. Both machines must be on the same ROS2 network (same `ROS_DOMAIN_ID`).
+This package is kept separate from the main installation to keep the Robot Computer lean. Both machines must be on the same ROS2 network (same `ROS_DOMAIN_ID`).
 
 ---
 
 ## Simulated Robot
 
-The simulation runs on your host/development machine and does not require a physical robot at all. It's a great way to tune Nav2 parameters and test your configuration before deploying to hardware.
+The simulation runs on your host/development machine and does not require a Physical Robot at all. It's a great way to tune Nav2 parameters and test your configuration before deploying to hardware.
 
 ### 2.1 Install linorobot2 Package
 
