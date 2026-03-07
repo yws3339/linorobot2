@@ -49,8 +49,9 @@ ros2 launch linorobot2_bringup bringup.launch.py
 
 **Simulated Robot:**
 ```bash
-ros2 launch linorobot2_gazebo gazebo.launch.py
+ros2 launch linorobot2_gazebo gazebo.launch.py spawn_x:=0.5
 ```
+- `spawn_y`, `spawn_z`, can also be used to set the initial position of the Simulated Robot in Gazebo.
 
 The rest of this section covers what each of these actually does under the hood.
 
