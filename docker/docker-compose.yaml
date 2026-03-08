@@ -9,7 +9,7 @@ services:
         - HOST_UID=${HOST_UID:-1000}
         - HOST_GID=${HOST_GID:-1000}
         - BASE_IMAGE=${BASE_IMAGE}
-        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
+        - DOCKER_ROS_DISTRO=${DOCKER_ROS_DISTRO:-jazzy}
         - ROBOT_BASE=${ROBOT_BASE}
         - LASER_SENSOR=${LASER_SENSOR}
         - DEPTH_SENSOR=${DEPTH_SENSOR}
