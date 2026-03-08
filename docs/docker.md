@@ -18,6 +18,20 @@ BASE_IMAGE=gazebo        # Simulated Robot
 BASE_IMAGE=gazebo-cuda   # Gazebo simulation with CUDA support (recommended if you have an NVIDIA GPU)
 ```
 
+If you are using `gazebo-cuda`, set the GPU to use for rendering:
+
+```
+GPU_ID=0  # GPU index to use for rendering
+```
+
+The GPU index may not always start at `0`. To find the correct value, run:
+
+```bash
+ls /dev/dri/card*
+```
+
+The number at the end of each path (e.g. `card0`, `card1`) corresponds to a GPU index. Set `GPU_ID` to the index of the GPU you want to use.
+
 If you are working with Physical Robot, also set the following:
 
 ```
