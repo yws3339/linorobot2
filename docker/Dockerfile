@@ -1,15 +1,15 @@
-ARG ROS_DISTRO=jazzy
+ARG DOCKER_ROS_DISTRO=jazzy
 ARG BASE_IMAGE=gazebo-cuda
-FROM althack/ros2:${ROS_DISTRO}-dev AS hardware
-FROM althack/ros2:${ROS_DISTRO}-gazebo AS gazebo
-FROM althack/ros2:${ROS_DISTRO}-cuda-gazebo AS gazebo-cuda
+FROM althack/ros2:${DOCKER_ROS_DISTRO}-dev AS hardware
+FROM althack/ros2:${DOCKER_ROS_DISTRO}-gazebo AS gazebo
+FROM althack/ros2:${DOCKER_ROS_DISTRO}-cuda-gazebo AS gazebo-cuda
 
 FROM ${BASE_IMAGE:-gazebo-cuda} AS final
 
 # Build arguments
 ARG VIRTUALGL_VER="3.1"
 ARG TARGETARCH
-ARG ROS_DISTRO=jazzy
+ARG DOCKER_ROS_DISTRO=jazzy
 ARG BASE_IMAGE=gazebo-cuda
 ARG ROBOT_BASE=
 ARG LASER_SENSOR=
@@ -75,7 +75,7 @@ RUN if [ "$BASE_IMAGE" = 'gazebo-cuda' ]; then \
 # Install sensor drivers (hardware mode only)
 RUN /bin/bash -c " \
     if [ '${BASE_IMAGE}' = 'hardware' ]; then \
-        source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        source /opt/ros/${DOCKER_ROS_DISTRO}/setup.bash && \
         sudo apt-get update && \
         bash ${WORKSPACE}/src/linorobot2/install.bash \
             ${ROBOT_BASE:+--base ${ROBOT_BASE}} \
@@ -88,9 +88,9 @@ RUN /bin/bash -c " \
 
 # Update rosdep and install dependencies
 RUN sudo apt-get update && \
-    rosdep update --rosdistro=${ROS_DISTRO} && \
+    rosdep update --rosdistro=${DOCKER_ROS_DISTRO} && \
     rosdep install \
-        --rosdistro=${ROS_DISTRO} \
+        --rosdistro=${DOCKER_ROS_DISTRO} \
         --from-paths src \
         -iry \
         --os=ubuntu:$(lsb_release --codename | cut -f2) \
@@ -98,7 +98,7 @@ RUN sudo apt-get update && \
     sudo rm -rf /var/lib/apt/lists/*
 
 # Build the workspace
-RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build"
+RUN /bin/bash -c "source /opt/ros/${DOCKER_ROS_DISTRO}/setup.bash && colcon build"
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash"] 
