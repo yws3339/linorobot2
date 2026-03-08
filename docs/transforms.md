@@ -24,6 +24,8 @@ map
 
 Each arrow (`└──`) represents a transform, a known spatial relationship between two frames. Here's what establishes each one:
 
+![TF tree](assets/tf.png)
+
 ### `map → odom`
 
 This transform represents the robot's position within the global map. It accounts for the accumulated error in odometry (the difference between where odometry thinks the robot is and where it actually is).

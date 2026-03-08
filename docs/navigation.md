@@ -99,6 +99,8 @@ In RViz, click **"2D Pose Estimate"** in the toolbar, then click on the map wher
 
 If the scan doesn't align, try setting the pose estimate again. The particle filter needs a few seconds to converge; drive the robot slowly for a moment to help it localize.
 
+![Setting the initial pose in RViz](assets/set_initial_pose.gif)
+
 ## Sending Navigation Goals
 
 Once the robot is localized, you can send it anywhere on the map:
@@ -111,6 +113,8 @@ Nav2 will:
 2. Begin following the path
 3. Avoid any new obstacles detected along the way
 4. Declare success when it arrives within the goal tolerance (default: 35 cm)
+
+![Sending a navigation goal in RViz](assets/set_navigation_goal.gif)
 
 For a detailed walkthrough of the RViz navigation interface, see the [Nav2 tutorial on Physical Robot navigation](https://docs.nav2.org/tutorials/docs/navigation2_on_real_turtlebot3.html#initialize-the-location-of-turtlebot-3).
 

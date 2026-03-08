@@ -123,6 +123,8 @@ ros2 topic echo /odom
 
 The `pose.pose.position.x` value should be approximately `1.0`. If it reads significantly more or less, check your wheel radius and encoder configuration in the firmware.
 
+![Echo odom output](assets/echo_odom.png)
+
 **Test 2: Rotate 360 degrees**
 
 Rotate the robot a full turn in place, then check that the position returns close to its starting point and the yaw is approximately back to 0. Large drift here usually indicates a wheel separation (track width) misconfiguration.

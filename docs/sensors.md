@@ -56,6 +56,8 @@ Sensors marked with `*` are depth cameras used as laser sensors. When configured
 
 In Gazebo, sensors are defined in URDF/xacro files and are already configured for each robot type. You don't need to install any additional drivers. Gazebo simulates the sensors and publishes on the same topics as real hardware.
 
+![Robot in Gazebo with sensors](assets/robot_in_gazebo.png)
+
 ### Sensor URDF Files
 
 Sensor definitions live in `linorobot2_description/urdf/sensors/`:
@@ -136,6 +138,8 @@ You can verify a sensor is publishing correctly with:
 ```bash
 ros2 topic hz /scan
 ```
+
+![Lidar sensor scan in RViz](assets/lidar_sensor.png)
 
 ## What's Next
 
