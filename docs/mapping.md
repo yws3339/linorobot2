@@ -79,6 +79,8 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
 Drive the robot slowly and methodically through the entire area you want to map. Cover all rooms, hallways, and corners. Move at a moderate pace. Going too fast gives SLAM Toolbox less time to match scans and can cause drift.
 
+![Mapping in progress](assets/mapping.gif)
+
 > **Tip:** Once the basic map outline is established, you can use RViz's **2D Goal Pose** tool to have the robot navigate autonomously while mapping. This is particularly useful for large spaces. See the [Nav2 SLAM tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html) for details.
 
 ## Saving the Map
