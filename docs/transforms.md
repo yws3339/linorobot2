@@ -78,6 +78,7 @@ For example, the default 2WD configuration:
 ```
 
 The `xyz` values are in meters, measured from `base_link`:
+
 - `x`: forward (positive) / backward (negative) from center
 - `y`: left (positive) / right (negative) from center
 - `z`: height above the ground plane

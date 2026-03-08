@@ -91,6 +91,7 @@ ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args -p save_map_time
 ```
 
 Replace `<map_name>` with a descriptive name (e.g., `office`, `lab`, `home`). This creates two files:
+
 - `<map_name>.yaml`: metadata (resolution, origin, and the image file location)
 - `<map_name>.pgm`: the map image (white = free, black = obstacle, grey = unknown)
 

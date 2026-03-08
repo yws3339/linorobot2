@@ -61,12 +61,14 @@ In Gazebo, sensors are defined in URDF/xacro files and are already configured fo
 Sensor definitions live in `linorobot2_description/urdf/sensors/`:
 
 **`generic_laser.urdf.xacro`:** Simulates a 360° 2D lidar:
+
 - 360 rays, full 360° sweep
 - Range: 0.08 m to 12.0 m
 - Update rate: 10 Hz
 - Publishes to: `/scan` (topic name: `scan`, frame ID: `laser`)
 
 **`depth_sensor.urdf.xacro`:** Simulates an RGBD camera:
+
 - Resolution: 640 × 480
 - Update rate: 30 Hz
 - Horizontal FOV: ~86°
@@ -74,6 +76,7 @@ Sensor definitions live in `linorobot2_description/urdf/sensors/`:
 - Publishes to: `/camera` topics
 
 **`imu.urdf.xacro`:** Simulates an IMU:
+
 - Publishes to: `/imu/data` at 50 Hz
 
 ### How Sensors Are Included

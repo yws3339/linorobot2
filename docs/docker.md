@@ -123,6 +123,7 @@ tmuxinator start dev
 This starts the `dev` container and KasmVNC, then opens a tmux window with four bash panes ready for development.
 
 Useful tmux key bindings:
+
 - `Ctrl+B` then arrow keys: navigate between panes
 - `Ctrl+B` then `D`: detach from the session (containers keep running)
 

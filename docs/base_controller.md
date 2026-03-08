@@ -51,6 +51,7 @@ ros2 launch linorobot2_bringup bringup.launch.py
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py spawn_x:=0.5
 ```
+
 - `spawn_y`, `spawn_z`, can also be used to set the initial position of the Simulated Robot in Gazebo.
 
 The rest of this section covers what each of these actually does under the hood.
@@ -105,6 +106,7 @@ The drive controller is defined in `linorobot2_description/urdf/controllers/diff
 ```
 
 This plugin does what the microcontroller firmware does on the Physical Robot:
+
 - Subscribes to `cmd_vel` for incoming `Twist` velocity commands
 - Converts them to per-wheel velocities using the kinematic model, driven by `wheel_separation` and `wheel_radius`
 - Publishes wheel odometry to `odom/unfiltered` at 50 Hz
