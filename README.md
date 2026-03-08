@@ -18,7 +18,7 @@ Supported base configurations: **2WD**, **4WD**, and **Mecanum drive**.
 ## What Can You Do With It?
 
 - **Build a real autonomous robot.** Follow the [hardware guide](https://github.com/linorobot/linorobot2_hardware) to assemble your robot from off-the-shelf parts, flash the micro-ROS firmware, and run SLAM and Nav2 with a single command.
-- **Simulate in Gazebo.** A pre-configured robot URDF with lidar, depth camera, and IMU is ready to spawn. The same launch files and Nav2 configuration work for both real and simulated robots, with no separate config to maintain.
+- **Simulate in Gazebo.** A pre-configured robot URDF with lidar, depth camera, and IMU is ready to spawn. The same launch files and Nav2 configuration work for both physical and simulated robots, with no separate config to maintain.
 - **Simulate your real environment.** Convert a floor plan image or a SLAM-generated map directly into a Gazebo world. Test your ROS2 application in the exact same layout as your physical space, with the same obstacles your lidar sees, with no need to run the robot.
 - **Learn Nav2.** The documentation walks through the [Nav2 setup guides](https://docs.nav2.org/setup_guides/index.html) journey step by step: base controller, odometry, sensors, transforms, SLAM, and navigation. Each concept is explained before it is configured.
 - **Prototype new hardware.** Use the templated URDF as a starting point for your own robot design. Swap in your CAD meshes, adjust the sensor poses, and validate the kinematics in Gazebo before cutting any parts.
@@ -28,7 +28,7 @@ Supported base configurations: **2WD**, **4WD**, and **Mecanum drive**.
 
 ### Nav2, SLAM Toolbox, and robot_localization (pre-integrated)
 
-linorobot2 ships with working configurations for the full ROS2 autonomous navigation stack. Nav2, SLAM Toolbox, and the robot_localization EKF are configured and ready to go. The same YAML files are used by both the real robot and the Gazebo simulation, so tuning in simulation transfers directly to hardware.
+linorobot2 ships with working configurations for the full ROS2 autonomous navigation stack. Nav2, SLAM Toolbox, and the robot_localization EKF are configured and ready to go. The same YAML files are used by both the physical robot and the Gazebo simulation, so tuning in simulation transfers directly to hardware.
 
 ![Architecture](docs/assets/linorobot2_launchfiles.png)
 
@@ -61,9 +61,9 @@ Detailed hardware documentation covering motor driver configuration and micro-RO
 
 ## Quickstart
 
-All commands below run on the robot computer unless noted. SLAM and navigation launch files are identical for real and simulated robots.
+All commands below run on the robot computer unless noted. SLAM and navigation launch files are identical for physical and simulated robots.
 
-### Real Robot
+### Physical Robot
 
 **Terminal 1:Boot the robot:**
 ```bash
@@ -98,14 +98,14 @@ ros2 launch linorobot2_viz slam.launch.py        # during mapping
 ros2 launch linorobot2_viz navigation.launch.py  # during navigation
 ```
 
-### Simulation
+### Simulated Robot
 
 **Terminal 1:Start Gazebo:**
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py
 ```
 
-**Terminal 2:Run SLAM or navigation** (same commands as real robot, add `sim:=true`):
+**Terminal 2:Run SLAM or navigation** (same commands as physical robot, add `sim:=true`):
 ```bash
 ros2 launch linorobot2_navigation slam.launch.py sim:=true
 # or
