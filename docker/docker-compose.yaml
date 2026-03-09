@@ -118,7 +118,5 @@ services:
     network_mode: host
     environment:
     - DISPLAY=:200
-    devices:
-    - /dev/dri:/dev/dri
     volumes:
     - ./kasm-autostart:/defaults/autostart
