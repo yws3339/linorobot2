@@ -115,7 +115,7 @@ Before running SLAM or navigation, it's worth verifying that your odometry is wo
 
 **Test 1: Drive forward 1 meter**
 
-Rotate 90 degrees CCW or CW and drive the robot forward 1 meter using teleop, then check the `/odom` topic:
+Rotate the robot 90 degrees CCW or CW and drive it forward 1 meter using teleop, then check the `/odom` topic:
 
 ```bash
 ros2 topic echo /odom
