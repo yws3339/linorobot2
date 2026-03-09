@@ -115,7 +115,7 @@ Before running SLAM or navigation, it's worth verifying that your odometry is wo
 
 **Test 1: Drive forward 1 meter**
 
-Drive the robot forward 1 meter using teleop, then check the `/odom` topic:
+Rotate 90 degrees CCW or CW and drive the robot forward 1 meter using teleop, then check the `/odom` topic:
 
 ```bash
 ros2 topic echo /odom
@@ -123,7 +123,7 @@ ros2 topic echo /odom
 
 The `pose.pose.position.x` value should be approximately `1.0`. If it reads significantly more or less, check your wheel radius and encoder configuration in the firmware.
 
-![Echo odom output](assets/echo_odom.png)
+![Echo odom output](assets/echo_odom_pose.png)
 
 **Test 2: Rotate 360 degrees**
 
