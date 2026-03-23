@@ -143,4 +143,4 @@ ros2 topic hz /scan
 
 ## What's Next
 
-With sensors publishing data, the next step is to make sure the robot knows *where* those sensors are mounted in 3D space, so it can correctly interpret a laser hit at angle X as being at a specific position in the world. That's the job of the TF tree, covered in [Setting Up Transforms](06_transforms.md).
+With sensors publishing data, the next step is to make sure the robot knows *where* those sensors are mounted in 3D space, so it can correctly interpret a laser hit at angle X as being at a specific position in the world. That's the job of the TF tree, covered in [Setting Up Transforms](../transforms/).
