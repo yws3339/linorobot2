@@ -162,4 +162,4 @@ If you enable the magnetometer, you'll also need to update `ekf.yaml` to use the
 
 ## What's Next
 
-Once the base controller is running and connected, you have a robot that can receive velocity commands and report its position. The next step is to make that position estimate more reliable using sensor fusion. See [Odometry](04_odometry.md).
+Once the base controller is running and connected, you have a robot that can receive velocity commands and report its position. The next step is to make that position estimate more reliable using sensor fusion. See [Odometry](../odometry/).

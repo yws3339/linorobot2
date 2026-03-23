@@ -101,4 +101,4 @@ Keep both files in the same directory. The YAML references the PGM by path.
 
 ## What's Next
 
-With a map in hand, the robot has everything it needs for autonomous navigation. The next step is to load the map and start Nav2, which will use the map for path planning and AMCL for localization. See [Navigation](08_navigation.md).
+With a map in hand, the robot has everything it needs for autonomous navigation. The next step is to load the map and start Nav2, which will use the map for path planning and AMCL for localization. See [Navigation](../navigation/).

@@ -135,4 +135,4 @@ Launch RViz and add an `Odometry` display subscribing to `/odom`. Drive the robo
 
 ## What's Next
 
-With reliable odometry established, the robot knows where it is within a local coordinate frame. The next step is to add sensors (lidar and depth cameras) so the robot can perceive its environment. See [Setting Up Sensors](05_sensors.md).
+With reliable odometry established, the robot knows where it is within a local coordinate frame. The next step is to add sensors (lidar and depth cameras) so the robot can perceive its environment. See [Setting Up Sensors](../sensors/).

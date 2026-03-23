@@ -153,4 +153,4 @@ There's likely a syntax error in your `<robot_type>_properties.urdf.xacro`. Chec
 
 ## What's Next
 
-With the TF tree correctly configured, every sensor reading is spatially grounded, meaning the system knows exactly where in the world each measurement came from. Now you're ready to start building a map. See [Mapping](07_mapping.md).
+With the TF tree correctly configured, every sensor reading is spatially grounded, meaning the system knows exactly where in the world each measurement came from. Now you're ready to start building a map. See [Mapping](../mapping/).
