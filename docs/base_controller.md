@@ -130,9 +130,10 @@ It publishes directly to `imu/data` at 50 Hz, the same topic the EKF reads in `e
 
 ## Magnetometer Support (Physical Robot)
 
-The IMU includes a magnetometer that can provide absolute heading (compass direction). How IMU data reaches the EKF depends on whether the magnetometer is enabled.
+The sensor suite for a Physical Robot can include a magnetometer that can provide
+absolute heading (compass direction). How IMU data reaches the EKF depends on whether the magnetometer is enabled.
 
-**Without Madgwick (default):**
+**Without Magnetometer (default):**
 
 ```mermaid
 flowchart LR
@@ -140,7 +141,7 @@ flowchart LR
     D --> EKF["EKF (robot_localization)"]
 ```
 
-**With Madgwick enabled (`madgwick:=true`):**
+**With Magnetometer enabled (`madgwick:=true`):**
 
 ```mermaid
 flowchart LR

@@ -111,7 +111,10 @@ Sensor positions are set in `linorobot2_description/urdf/<robot_type>_properties
 </xacro:property>
 ```
 
-All positions are measured from `base_link` (the center of the robot's base). Change these values to match where your sensors are physically mounted. After editing the xacro file, rebuild the workspace:
+All positions are measured from `base_link` (the point about which the robot rotates).
+On a differential drive or skid steer robot this is typically the midpoint between
+the driving wheels. Change these values to match where your sensors are physically
+mounted. After editing the xacro file, rebuild the workspace:
 
 ```bash
 cd <robot_computer_ws>
