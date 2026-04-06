@@ -35,17 +35,39 @@ For advanced tuning (adjusting loop closure thresholds, scan matching parameters
 
 If you get the warning `slam_toolbox: Message Filter dropping message: frame 'laser'`, increase `transform_timeout` by 0.1 until it disappears.
 
-## Creating a Map
+## Launch the mapping software components
 
-Make sure the robot is fully booted and all topics (laser scan, odometry) are publishing before starting SLAM.
+### Physical Robot
 
-**Terminal 1: Boot the robot** (Physical Robot):
+**Terminal 1: Launch the Physical Robot bringup**
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
 ```
 
-Or for Simulated Robot:
+Make sure all topics (laser scan, odometry) are publishing before starting SLAM.
+
+**Terminal 2: Start SLAM Toolbox:**
+
+```bash
+ros2 launch linorobot2_navigation slam.launch.py
+```
+
+**Terminal 3: Visualize (from Workstation):**
+
+```bash
+ros2 launch linorobot2_viz slam.launch.py
+```
+
+**Terminal 4: Drive the robot:**
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+### Simulated Robot
+
+**Terminal 1: Launch the Simulated Robot bringup, including Gazebo**
 
 ```bash
 ros2 launch linorobot2_gazebo gazebo.launch.py
@@ -54,28 +76,18 @@ ros2 launch linorobot2_gazebo gazebo.launch.py
 **Terminal 2: Start SLAM Toolbox:**
 
 ```bash
-ros2 launch linorobot2_navigation slam.launch.py
-```
-
-For the Simulated Robot:
-
-```bash
 ros2 launch linorobot2_navigation slam.launch.py sim:=true rviz:=true
 ```
 
-**Terminal 3: Visualize (from host machine, ideally when working with Physical Robot):**
-
-```bash
-ros2 launch linorobot2_viz slam.launch.py
-```
-
-In RViz you should see the laser scan (colored dots) and the map building up as the robot moves.
-
-**Terminal 4: Drive the robot:**
+**Terminal 3: Drive the robot:**
 
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
+
+## Generate the map
+
+In RViz you should see the laser scan (colored dots) and the map building up as the robot moves.
 
 Drive the robot slowly and methodically through the entire area you want to map. Cover all rooms, hallways, and corners. Move at a moderate pace. Going too fast gives SLAM Toolbox less time to match scans and can cause drift.
 
@@ -83,7 +95,7 @@ Drive the robot slowly and methodically through the entire area you want to map.
 
 > **Tip:** Once the basic map outline is established, you can use RViz's **2D Goal Pose** tool to have the robot navigate autonomously while mapping. This is particularly useful for large spaces. See the [Nav2 SLAM tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html) for details.
 
-## Saving the Map
+## Save the Map
 
 Once you're satisfied with the map, save it before shutting anything down. The map must be saved while SLAM Toolbox is still running.
 

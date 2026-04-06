@@ -26,7 +26,9 @@ See [here](../system_configurations/) for definitions of the configurations.
 
 ### Prerequisites
 
-The Workstation and Robot Computer need ROS2 Jazzy. If you haven't installed it yet,
+The Workstation and Robot Computer need supported versions of Ubuntu
+and ROS2. See the System Requirements section of the main page
+for supported versions. If you haven't installed it yet,
 use the [ros2me](https://github.com/linorobot/ros2me) installer script,
 which has been tested on x86 and ARM boards including Raspberry Pi 4
 and Nvidia Jetson series.
@@ -200,8 +202,9 @@ The simulation package already includes RVIZ configurations, so you do not need 
 
 ## Docker Option
 
-If you're not running Ubuntu 24.04 with ROS2 Jazzy, or you're running simulation
-in the cloud, Docker is a convenient alternative for running the simulation.
+If you're not running a supported combination of Ubuntu and ROS2 versions,
+or if you're running simulation in the cloud where you don't even have Ubuntu,
+Docker is a convenient alternative for running simulation.
 
 Install Docker using the [official instructions](https://docs.docker.com/engine/install/) and follow the [post-install steps](https://docs.docker.com/engine/install/linux-postinstall/) to run Docker without `sudo`.
 

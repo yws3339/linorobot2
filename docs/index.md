@@ -8,7 +8,7 @@ a "digital twin" of your Physical Robot and run it in simulation.
 These docs are structured as a tutorial sequence, with each section building on the previous one, explaining not just *how* to configure something but *why* it exists and what role it plays in the larger system. The approach is inspired by the [Nav2 setup guides](https://docs.nav2.org/setup_guides/index.html) and the original [linorobot](https://github.com/linorobot/linorobot) ROS1 wiki.
 
 linorobot2 supports three robot base configurations
-(differential drive, skid steer, mecanum drive) and integrates with ROS2 Jazzy, Nav2, SLAM Toolbox, and robot_localization out of the box.
+(differential drive, skid steer, mecanum drive) and integrates with ROS2, Nav2, SLAM Toolbox, and robot_localization out of the box.
 
 ---
 
@@ -38,8 +38,9 @@ support custom message types that are exchanged between Robot Firmware
 and Robot Software.
 
 - Easier to keep robot customizations up to date with later versions of
-linorobot2 software and firmware. You don't want to get trapped in ROS-Jazzy
-or ROS-Humble because it's too hard to redo your customizations.
+linorobot2 software and firmware. You don't want to get trapped in an
+old version of ROS2 when they get upgraded
+because it's too hard to redo your customizations.
 Using the architected extension points in Robot Firmware and Robot Software
 properly can ease future migration.
 
@@ -68,7 +69,8 @@ and is comprised of a body, wheels, motors, sensors, the Microcontroller,
 and other physical hardware that moves in the real world.
 
 - **Simulated Robot**: The mobile base that gets instantiated in a Gazebo
-simulation, and moves in a simulated world.
+simulation, and moves in a simulated world and has the same subscribed and
+published topics found in a Physical Robot.
 
 - **Robot Software**: The ROS software including linorobot2 and Nav2
 and other ROS packages that run on the Robot Computer and control
@@ -86,7 +88,7 @@ the Simulation Computer by running the Gazebo simulator and Robot
 Software.
 
 - **Robot Computer**: The computer that runs the Robot
-Software. It is a conceptual computer, and may be a physically distict
+Software. It is a conceptual computer, and may be a physically distinct
 computer, such as a Raspberry Pi mounted on a Physical Robot, or may be
 the Workstation running the Robot Software
 
@@ -114,9 +116,8 @@ A Physical Robot should meet these requirements:
 - A single Microcontroller runs motor controllers, encoders and
 (optionally) an IMU.
 - The robot has a supported lidar or a depth camera
-- The Microcontroller should be an ESP32 or Pico or Pico2. ESP32 is required
-to make the Robot Wifi Configuration work. The Teensy microcontroller
-is deprecated but should still work.
+- The Microcontroller should be a Pico or Pico2 or supported version
+of ESP32. The Teensy microcontroller is deprecated but should still work.
 - Differential drive, skid-steer or meccanum drive type. Ackermann steered
 robots are not yet supported.
 
@@ -129,7 +130,7 @@ it work.
 The Robot Computer must meet these requirements:
 
 - At least a Raspberry Pi 4 level of performance
-- Ubuntu 24.04 plus ROS-Jazzy or Docker support
+- Ubuntu 24.04 plus ROS-Jazzy, or Docker support
 
 ### Workstation
 
@@ -155,9 +156,10 @@ two for a Physical Robot and two for a Simulated Robot:
 
 1. Onboard Robot Computer Configuration: A computer mounted on the
 robot runs Robot Software which communicates with Robot Firmware
-using a serial link.
+using a serial link. This is considered the "typical" configuration.
 2. Robot Wifi Configuration: Robot Software runs on the Workstation
-and communicates with Robot Firmware using wifi.
+and communicates with Robot Firmware using wifi. This configuration
+supports very low-cost robots but does rely on very good wifi.
 
 ### Simulated Robot System Configurations
 

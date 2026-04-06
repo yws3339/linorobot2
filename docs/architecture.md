@@ -24,7 +24,7 @@ flowchart LR
 
 The Workstation provides the user a way to start Robot Software, as
 well as to visualize the robot and its data using ROS GUI tools like
-rviz and rqt. It also runs the Robot Firmware build system (PlatformIO),
+Rviz and rqt. It also runs the Robot Firmware build system (PlatformIO),
 and reprograms the Microcontroller with Robot Firmware updates.
 
 The Robot Software includes linorobot2 packages from this repo, as
@@ -59,7 +59,7 @@ flowchart LR
 
 As with the Physical Robot, the Workstation provides the user a way to
 start Robot Software and the Gazebo physics simulator, as well as to
-visualize the robot and its data using ROS GUI tools like rviz and rqt.
+visualize the robot and its data using ROS GUI tools like Rviz and rqt.
 
 The Robot Software is the same as in a Physical Robot - it includes
 linorobot2 packages from this repo, as well as the Nav2 navigation
@@ -130,8 +130,104 @@ Robot Firmware, and how they relate.
 
 ![ros and micro-ros architecture](assets/ros_microros_architecture.png)
 
-TODO: 
+The software stack on the left half of the diagram shows the layers of Robot
+Software running on the Robot Computer. The software stack on the right
+half of the diagram shows the layers of Robot Firmware running on the
+Microcontroller. Conceptually, layers at a similar level in both stacks
+can be considered to communicate with each other. The layers are described
+below, starting from the bottom.
 
-- explain the protocol stacks, and where Robot Software and Firmware fit in them.
-- Explain micro-ros
-- Discuss C++ on Robot Software side vs C on firmware side, -> different APIs
+The Robot Software can be considered "ROS" software. The Robot Firmware
+can be considered micro-ros firmware.
+
+### OS layer
+
+Robot Software (the ROS2 nodes) run on the Robot Computer operating system.
+It is built by colcon and launched by the user with ros2 launch and run commands,
+after the Robot Computer has booted.
+
+Robot Firmware runs in the Arduino environment on the Microcontroller - there
+is no operating system. It is built by PlatformIO and starts as soon as the
+Microcontroller is powered on and boots.
+
+### DDS Implementation Layer
+
+Robot Software uses one of several supported variants of DDS transport to pass
+messages between ROS nodes. The bringup launch file starts the ROS2 Agent
+which tries to establish communication with Robot Firmware.
+
+Robot Firmware uses the Micro XRCE-DDS client to pass DDS messages between
+firmware layers above it and a ROS2 Agent running on the Robot Computer.
+
+When Robot Firmware starts, the XRCE-DDS client attempts to establish
+communication with the ROS2 Agent, and waits until that handshake suceeds.
+Once the XRCE-DDS client has established communication with the ROS2 Agent,
+DDS messages can flow between Robot Software and Robot Firmware, and
+subscriptions and publications can be set up between Robot Software
+and Firmware.
+
+### Abstract DDS Layer
+
+This layer is a thin shim which abstracts the differences between DDS
+implementations, so that the libraries in the ROS Client layer see
+a consistent interface to the DDS transport.
+
+### ROS Client Layer
+
+This is the most important layer of the architecture - it provides the
+ROS semantics (publish, subscribe, create_timer, and many more) to
+application-level software and firmware above it. Importantly, the rcl
+(Ros Client Library) is the same code running on both the Robot
+Computer and the Microcontroller, which ensures the API for application software
+is consistent.
+
+The rcl library provides a 'C' interface to both the Robot Software clients
+and Robot Firmware clients. However, Robot Software (ROS) provides language-specific
+shim libraries (rclcpp for C++, rclpy for python), whereas Robot Firmware does not.
+Therefore, applications in Robot Software are written to a C++ or Python interface
+spec, wherease applications in Robot Firmware are written to a C interface spec.
+Nevertheless, the same semantics (subscriptions, publications, timers, services)
+are maintained in both environments. For this reason, application code in
+Robot Software looks different than application code in Robot Firmware - they
+are written in different languages (C++ or python for software, C for firmware).
+
+If you keep in mind that the same semantics are provided in the C++, python, and
+C environments, you can pretty easily understand all of them.
+
+The rcl library in Robot Software can be considered to communicate with the rcl
+library in Robot Firmware in the sense that if a firmware client subscribes to a
+topic, the firmware rcl library ensures that its caller will get callbacks
+when a software client publishes to that topic.
+
+An important aspect of the ROS Client layer is it includes interface
+message definitions.  This means that all the standard ROS messages can
+be used by firmware, and custom interface message types defined using
+message-generation tools can also be used by firmware. Therefore it is
+possible to define robot-specific interface messages and use them in both
+Robot Software and Robot Firmware without any change to the message-passing
+layers.
+
+### Application Layer
+
+The application layer is where Robot Software nodes communicate with robot-specific
+firmware. For example, navigation software can publish motion commands on
+the /cmd_vel topic to firmware that will operate the motor drivers,
+and firmware can publish robot data like odometry on the /odom topic
+to navigation software.
+
+## Micro-ros
+
+Broadly, micro-ros is the firmware that runs in the Arduino environment and
+provides services to robot-specific application firmware. 
+
+## linorobot_hardware
+
+The [linorobot2_hardware](https://github.com/linorobot/linorobot2_hardware) repo
+contains the application-layer part of Robot Firmware, and the build configurations
+that pull in micro-ros and Arduino to build a working firmware. It contains
+configuration files that allow customization of the application layer
+to your specific robot.
+
+linorobot_hardware is in a separate repo from Robot Software because its
+build processes and operations are very different from ROS software. Nevertheless
+it is an integral part of a linorobot2 Physical Robot.
