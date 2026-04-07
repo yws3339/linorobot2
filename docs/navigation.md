@@ -55,20 +55,16 @@ cd <robot_computer_ws>
 colcon build
 ```
 
-## Running Navigation
+## Launch the Navigation Software Components
 
 You need a map saved from the [Mapping](07_mapping.md) step before proceeding.
 
-**Terminal 1: Boot the robot** (Physical Robot):
+### Physical Robot
+
+**Terminal 1: Launch the Physical Robot bringup**
 
 ```bash
 ros2 launch linorobot2_bringup bringup.launch.py
-```
-
-Or for Simulated Robot:
-
-```bash
-ros2 launch linorobot2_gazebo gazebo.launch.py
 ```
 
 **Terminal 2: Launch Nav2:**
@@ -77,23 +73,31 @@ ros2 launch linorobot2_gazebo gazebo.launch.py
 ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml
 ```
 
-For Simulated Robot:
-
-```bash
-ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml sim:=true rviz:=true
-```
-
-Nav2 will start and print `Timed out waiting for transform from base_link to map`. This is normal. It means AMCL is waiting for the robot's initial pose before it can publish the `map → odom` transform.
-
-**Terminal 3: Visualize (from host machine, ideally when working with Physical Robot):**
+**Terminal 3: Visualize (from Workstation):**
 
 ```bash
 ros2 launch linorobot2_viz navigation.launch.py
 ```
 
+### Simulated Robot
+
+**Terminal 1: Launch the Simulated Robot bringup, including Gazebo**
+
+```bash
+ros2 launch linorobot2_gazebo gazebo.launch.py
+```
+
+**Terminal 2: Launch Nav2:**
+
+```bash
+ros2 launch linorobot2_navigation navigation.launch.py map:=<path_to_map>/<map_name>.yaml sim:=true rviz:=true
+```
+
 ## Setting the Initial Pose
 
 When Nav2 starts, AMCL doesn't know where the robot is in the map. You must tell it.
+
+Nav2 will start and print `Timed out waiting for transform from base_link to map`. This is normal. It means AMCL is waiting for the robot's initial pose before it can publish the `map → odom` transform.
 
 In RViz, click **"2D Pose Estimate"** in the toolbar, then click on the map where the robot actually is and drag in the direction the robot is facing. You should see the laser scan snap into alignment with the walls on the map, which confirms AMCL has correctly localized the robot.
 

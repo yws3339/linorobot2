@@ -1,6 +1,7 @@
 # Docker
 
-Docker lets you run linorobot2 without a native ROS2 installation. It is particularly useful for simulation on machines not running Ubuntu 24.04, for cloud-based simulation, and for remote visualization over a browser without needing a display attached.
+Docker lets you run linorobot2 without a native ROS2 installation. It is particularly useful for simulation on machines not running a supported
+Ubuntu version, for cloud-based simulation, and for remote visualization over a browser without needing a display attached.
 
 All commands below are run from the **repository root** unless a `cd` step explicitly changes directory.
 
