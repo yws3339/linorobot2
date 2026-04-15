@@ -140,22 +140,28 @@ This reads every YAML file in `linorobot2_navigation/maps/`, extrudes the occupa
 
 ## Documentation
 
-Full documentation covering installation, base controller, odometry, sensors, transforms, mapping, and navigation is in the [`docs/`](docs/) directory.
+Full documentation covering installation, base controller, odometry, sensors, transforms, mapping, navigation and more is in the [linorobot2 documentation website](https://linorobot.github.io/linorobot2/)
 
-To browse the docs locally:
+### Documentation Maintenance
+
+Documentation is stored in the [`docs/`](docs/) directory and its subdirectories as a set of markdown files which are published to
+the linorobot2 documentation website (implemented using GitHub Pages).
+This happens automatically on every push to the current actively maintained main branch (e.g. `jazzy`).
+
+You can browse the docs locally and review your updates prior to committing and publishing:
 
 ```bash
-pip install mkdocs-material
+sudo apt install mkdocs-material
 mkdocs serve
 ```
 
 Then open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
-The docs are also published to GitHub Pages automatically on every push to the `jazzy` and `docs` branches.
 
 ## Installation
 
-See [docs/02_installation.md](docs/02_installation.md) for full installation instructions covering the robot computer, host machine, and Docker.
+See the Installation page of the [linorobot2 documentation website](https://linorobot.github.io/linorobot2/) for full installation instructions covering the Workstation, Robot Computer,
+Microcontroller, and Docker.
 
 ## Useful Resources
 
