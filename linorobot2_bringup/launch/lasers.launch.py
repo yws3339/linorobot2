@@ -142,21 +142,22 @@ def generate_launch_description():
             }]
         ),
 
-        # Node(
-        #     condition=LaunchConfigurationEquals('sensor', 'rplidar'),
-        #     name='rplidar_composition',
-        #     package='rplidar_ros',
-        #     executable='rplidar_composition',
-        #     output='screen',
-        #     remappings=[('scan', LaunchConfiguration('topic_name'))],
-        #     parameters=[{
-        #         'serial_port': '/dev/ttyUSB0',
-        #         'serial_baudrate': 115200,  # A1 / A2
-        #         'frame_id': LaunchConfiguration('frame_id'),
-        #         'inverted': False,
-        #         'angle_compensate': True,
-        #     }],
-        # ),
+        Node(
+            condition=IfCondition(EqualsSubstitution(LaunchConfiguration('sensor'), 'rplidar')),
+            name='rplidar_composition',
+            package='rplidar_ros',
+            executable='rplidar_composition',
+            output='screen',
+            remappings=[('scan', LaunchConfiguration('topic_name'))],
+            parameters=[{
+                'serial_port': '/dev/rplidar',
+                'serial_baudrate': 256000,  # A2M12
+                'frame_id': LaunchConfiguration('frame_id'),
+                'inverted': False,
+                'angle_compensate': True,
+                'scan_mode': 'Boost',
+            }],
+        ),
 
         Node( 
             condition=LaunchConfigurationEquals('sensor', 'xv11'),

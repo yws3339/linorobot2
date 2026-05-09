@@ -15,7 +15,7 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.substitutions import PathJoinSubstitution, PythonExpression, LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution, PythonExpression, LaunchConfiguration, EqualsSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
 from launch.conditions import IfCondition, LaunchConfigurationEquals
@@ -48,8 +48,10 @@ def generate_launch_description():
             condition=LaunchConfigurationEquals('sensor', 'realsense'),
             launch_arguments={
                 'pointcloud.enable': 'true',
-                'ordered_pc': 'true', 
-                'initial_reset': 'true'
+                'ordered_pc': 'true',
+                'initial_reset': 'true',
+                'depth_module.profile': '320,240,30',
+                'rgb_camera.profile': '640,480,15'
             }.items()   
         ),
 
