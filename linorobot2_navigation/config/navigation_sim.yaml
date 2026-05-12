@@ -212,7 +212,7 @@ local_costmap:
       stvl_layer:
         plugin: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"
         enabled: true
-        voxel_decay: 5.0              # 동적 관측 5초 후 decay (군중 환경 최적화)
+        voxel_decay: 1.0              # 동적 관측 1초 후 decay (군중 환경 최적화)
         decay_model: 0                # 0=linear
         voxel_size: 0.05
         track_unknown_space: true
