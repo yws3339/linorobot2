@@ -1,17 +1,14 @@
-"""자율주행 모드: map_server + AMCL + Nav2 (SLAM 없음).
+"""매핑 모드: slam_toolbox + Nav2.
 
-저장된 맵 위에서 AMCL이 위치 추정, Nav2가 경로 계획·추종.
-시연 당일 사용 — SLAM이 꺼져 있어 관객 영향으로 맵이 망가질 위험 없음.
+slam_toolbox가 /map을 동적으로 발행, Nav2가 동시에 동작 (teleop 또는 Nav2 goal로 주행하며 매핑).
+시연 전날 강당에서 맵을 만들 때 사용한 뒤 map_saver_cli로 저장.
 
 사용 예:
-  # 기본: aed_corridor 맵 (시뮬용)
-  ros2 launch linorobot2_navigation navigation.launch.py use_sim_time:=true
+  ros2 launch linorobot2_navigation mapping.launch.py use_sim_time:=true   # 시뮬
+  ros2 launch linorobot2_navigation mapping.launch.py                       # 실 로봇
 
-  # 다른 맵 지정 (실 로봇)
-  ros2 launch linorobot2_navigation navigation.launch.py \\
-    use_sim_time:=false map:=/path/to/venue_map.yaml
-
-RViz의 "2D Pose Estimate"로 초기 위치 보정 필수.
+매핑 완료 후 저장:
+  ros2 run nav2_map_server map_saver_cli -f ~/rp_ws/src/linorobot2/linorobot2_navigation/maps/venue_map
 """
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
@@ -21,17 +18,14 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    localization_launch_path = PathJoinSubstitution(
-        [FindPackageShare('nav2_bringup'), 'launch', 'localization_launch.py']
-    )
     nav2_launch_path = PathJoinSubstitution(
         [FindPackageShare('nav2_bringup'), 'launch', 'navigation_launch.py']
     )
+    slam_launch_path = PathJoinSubstitution(
+        [FindPackageShare('slam_toolbox'), 'launch', 'online_async_launch.py']
+    )
     params_file = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'), 'config', 'navigation_sim.yaml']
-    )
-    default_map = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'maps', 'aed_corridor.yaml']
     )
 
     return LaunchDescription([
@@ -40,23 +34,16 @@ def generate_launch_description():
             default_value='true',
             description='시뮬은 true, 실 로봇은 false',
         ),
-        DeclareLaunchArgument(
-            name='map',
-            default_value=default_map,
-            description='맵 yaml 파일 경로 (기본: aed_corridor.yaml)',
-        ),
 
-        # 1) Localization: map_server + AMCL
+        # slam_toolbox: /map 동적 발행
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(localization_launch_path),
+            PythonLaunchDescriptionSource(slam_launch_path),
             launch_arguments={
                 'use_sim_time': LaunchConfiguration('use_sim_time'),
-                'map': LaunchConfiguration('map'),
-                'params_file': params_file,
             }.items(),
         ),
 
-        # 2) Nav2: 경로 계획·추종
+        # Nav2: 동적 맵 위에서 경로 계획
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(nav2_launch_path),
             launch_arguments={

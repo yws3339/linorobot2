@@ -24,6 +24,11 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     robot_base = os.getenv('LINOROBOT2_BASE')
+    if not robot_base:
+        raise RuntimeError(
+            "LINOROBOT2_BASE 환경변수가 설정되지 않았습니다. "
+            "예: export LINOROBOT2_BASE=2wd (~/.bashrc에 영구 설정 권장)"
+        )
 
     urdf_path = PathJoinSubstitution(
         [FindPackageShare("linorobot2_description"), "urdf/robots", f"{robot_base}.urdf.xacro"]

@@ -1,8 +1,15 @@
 <!--
-  장애물 대기 우선 BT:
-  경로 추종 실패 시 10초 대기 후 재시도 (최대 10회)
-  장애물이 사라지면 자동으로 주행 재개
+  표준 Nav2 BT (linorobot2 기본값):
+  - PipelineSequence: 1Hz로 경로 재계산하며 추종
+  - 추종/계획 실패 시 복구 액션을 RoundRobin으로 순환:
+    1) Wait 2초
+    2) Local + Global costmap 클리어
+    3) Spin 1.57rad (90° 회전)
+    4) BackUp 0.30m (속도 0.15m/s)
+  - 전체 최대 30회 재시도 후 ABORTED
+  - 시연 안전 메모: 펜스/라인테이프로 회전·후진 여유 공간 확보 필요
 -->
+
 <root BTCPP_format="4" main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <RecoveryNode number_of_retries="30" name="NavigateRecovery">

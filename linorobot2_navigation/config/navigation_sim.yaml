@@ -38,6 +38,14 @@ amcl:
     z_rand: 0.5
     z_short: 0.05
     scan_topic: scan
+    # 자동 초기 위치: 로봇이 항상 맵 원점(0,0,0)에서 출발 (Gazebo spawn 위치 = 매핑 시작점)
+    # 다른 시작점이면 false로 두고 RViz의 "2D Pose Estimate"로 수동 설정
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
 
 bt_navigator:
   ros__parameters:
@@ -114,9 +122,11 @@ controller_server:
     use_sim_time: True
     controller_frequency: 20.0
     min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.5
+    min_y_velocity_threshold: 0.001  # 2WD diff drive는 y=0, 표준값으로 정리
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
+    # yolo_speed_governor가 /speed_limit (nav2_msgs/SpeedLimit) 발행 → DWB가 자동으로 max_vel_x 조정
+    speed_limit_topic: "speed_limit"
     progress_checker_plugin: "progress_checker"
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
@@ -192,32 +202,54 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      footprint: "[[0.16, 0.19], [0.16, -0.19], [-0.16, -0.19], [-0.16, 0.19]]"
-      plugins: ["voxel_layer", "inflation_layer"]
+      # 캐스터(앞 0.301m)와 본체 envelope 포함, 좌우는 바퀴 외곽(±0.189m)
+      footprint: "[[0.30, 0.19], [0.30, -0.19], [-0.20, -0.19], [-0.20, 0.19]]"
+      plugins: ["stvl_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
-      voxel_layer:
-        plugin: "nav2_costmap_2d::VoxelLayer"
-        enabled: True
-        publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
+      stvl_layer:
+        plugin: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"
+        enabled: true
+        voxel_decay: 5.0              # 동적 관측 5초 후 decay (군중 환경 최적화)
+        decay_model: 0                # 0=linear
+        voxel_size: 0.05
+        track_unknown_space: true
+        observation_persistence: 0.0
         max_obstacle_height: 2.0
+        unknown_threshold: 15
         mark_threshold: 0
-        observation_sources: scan
-        scan:
+        update_footprint_enabled: true
+        combination_method: 1
+        origin_z: 0.0
+        publish_voxel_map: true
+        transform_tolerance: 0.2
+        mapping_mode: false
+        # 실물: RPLIDAR 360° + L515 PointCloud2 직접 입력
+        # 시뮬: L515 PC2 미발행 시 자동 무시 (RPLIDAR만 동작)
+        observation_sources: rplidar_mark l515_mark
+        rplidar_mark:
+          data_type: LaserScan
           topic: /scan
+          marking: true
+          clearing: true
+          obstacle_range: 4.0
+          min_obstacle_height: 0.0
           max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+          inf_is_valid: false
+          voxel_filter: false
+        l515_mark:
+          data_type: PointCloud2
+          topic: /camera/depth/color/points
+          marking: true
+          clearing: true
+          obstacle_range: 4.0
+          min_obstacle_height: 0.05   # 바닥 노이즈 제거
+          max_obstacle_height: 1.5
+          inf_is_valid: false
+          voxel_filter: true
+          clear_after_reading: true
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -231,24 +263,50 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
-      footprint: "[[0.16, 0.19], [0.16, -0.19], [-0.16, -0.19], [-0.16, 0.19]]"
+      # 캐스터(앞 0.301m)와 본체 envelope 포함, 좌우는 바퀴 외곽(±0.189m)
+      footprint: "[[0.30, 0.19], [0.30, -0.19], [-0.20, -0.19], [-0.20, 0.19]]"
       resolution: 0.05
       track_unknown_space: true
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: True
-        observation_sources: scan
-        scan:
+      plugins: ["static_layer", "stvl_layer", "inflation_layer"]
+      stvl_layer:
+        plugin: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"
+        enabled: true
+        voxel_decay: 15.0             # global은 더 오래 기억 (정적 장애물 추적)
+        decay_model: 0
+        voxel_size: 0.05
+        track_unknown_space: true
+        observation_persistence: 0.0
+        max_obstacle_height: 2.0
+        unknown_threshold: 15
+        mark_threshold: 0
+        update_footprint_enabled: true
+        combination_method: 1
+        origin_z: 0.0
+        publish_voxel_map: false      # global은 시각화 비활성화 (부하 절감)
+        transform_tolerance: 0.2
+        mapping_mode: false
+        observation_sources: rplidar_mark l515_mark
+        rplidar_mark:
+          data_type: LaserScan
           topic: /scan
+          marking: true
+          clearing: true
+          obstacle_range: 4.0
+          min_obstacle_height: 0.0
           max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
-          obstacle_min_range: 0.0
+          inf_is_valid: false
+          voxel_filter: false
+        l515_mark:
+          data_type: PointCloud2
+          topic: /camera/depth/color/points
+          marking: true
+          clearing: true
+          obstacle_range: 4.0
+          min_obstacle_height: 0.05
+          max_obstacle_height: 1.5
+          inf_is_valid: false
+          voxel_filter: true
+          clear_after_reading: true
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -339,7 +397,7 @@ velocity_smoother:
     use_sim_time: True
     smoothing_frequency: 20.0
     scale_velocities: False
-    feedback: "OPEN_LOOP"
+    feedback: "CLOSED_LOOP"  # 대리석 슬립 환경에서 odom 피드백으로 보정
     max_velocity: [1.2, 0.0, 2.5]
     min_velocity: [-1.2, 0.0, -2.5]
     max_accel: [2.5, 0.0, 3.2]

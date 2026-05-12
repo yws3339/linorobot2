@@ -14,75 +14,37 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.conditions import IfCondition, UnlessCondition
+from launch.conditions import IfCondition
 
 
 def generate_launch_description():
-    sensors_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_bringup'), 'launch', 'sensors.launch.py']
-    )
-
-    joy_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_bringup'), 'launch', 'joy_teleop.launch.py']
+    ekf_config_path = PathJoinSubstitution(
+        [FindPackageShare("linorobot2_base"), "config", "ekf.yaml"]
     )
 
     description_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_description'), 'launch', 'description.launch.py']
     )
 
-    ekf_config_path = PathJoinSubstitution(
-        [FindPackageShare("linorobot2_base"), "config", "ekf.yaml"]
-    )
-
-    default_robot_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_bringup'), 'launch', 'default_robot.launch.py']
-    )
-
-    custom_robot_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_bringup'), 'launch', 'custom_robot.launch.py']
+    perception_launch_path = PathJoinSubstitution(
+        [FindPackageShare('linorobot2_bringup'), 'launch', 'perception.launch.py']
     )
 
     extra_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_bringup'), 'launch', 'extra.launch.py']
     )
 
+    joy_launch_path = PathJoinSubstitution(
+        [FindPackageShare('linorobot2_bringup'), 'launch', 'joy_teleop.launch.py']
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
-            name='custom_robot', 
-            default_value='false',
-            description='Use custom robot'
-        ),
-
-        DeclareLaunchArgument(
-            name='extra', 
-            default_value='false',
-            description='Launch extra launch file'
-        ),
-
-        DeclareLaunchArgument(
-            name='base_serial_port', 
-            default_value='/dev/ttyACM0',
-            description='Linorobot Base Serial Port'
-        ),
-
-        DeclareLaunchArgument(
-            name='micro_ros_transport',
-            default_value='serial',
-            description='micro-ROS transport'
-        ),
-
-        DeclareLaunchArgument(
-            name='micro_ros_port',
-            default_value='8888',
-            description='micro-ROS udp/tcp port number'
-        ),
-
-        DeclareLaunchArgument(
-            name='odom_topic', 
+            name='odom_topic',
             default_value='/odom',
             description='EKF out odometry topic'
         ),
@@ -100,11 +62,28 @@ def generate_launch_description():
         ),
 
         DeclareLaunchArgument(
-            name='joy', 
+            name='extra',
+            default_value='false',
+            description='Launch extra launch file (e.g. laser filter)'
+        ),
+
+        DeclareLaunchArgument(
+            name='joy',
             default_value='false',
             description='Use Joystick'
         ),
 
+        # EKF
+        Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
+            output='screen',
+            parameters=[ekf_config_path],
+            remappings=[("odometry/filtered", LaunchConfiguration("odom_topic"))]
+        ),
+
+        # Madgwick (선택)
         Node(
             condition=IfCondition(LaunchConfiguration("madgwick")),
             package='imu_filter_madgwick',
@@ -112,37 +91,60 @@ def generate_launch_description():
             name='madgwick_filter_node',
             output='screen',
             parameters=[{
-                'orientation_stddev' : LaunchConfiguration('orientation_stddev'),
-                'publish_tf' : False
+                'orientation_stddev': LaunchConfiguration('orientation_stddev'),
+                'publish_tf': False
             }]
         ),
 
-        Node(
-            package='robot_localization',
-            executable='ekf_node',
-            name='ekf_filter_node',
-            output='screen',
-            parameters=[
-                ekf_config_path
-            ],
-            remappings=[("odometry/filtered", LaunchConfiguration("odom_topic"))]
-        ),
-
+        # URDF + robot_state_publisher + joint_state_publisher
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(default_robot_launch_path),
-            condition=UnlessCondition(LaunchConfiguration("custom_robot")),
-            launch_arguments={
-                'base_serial_port': LaunchConfiguration("base_serial_port")
-            }.items()
+            PythonLaunchDescriptionSource(description_launch_path),
         ),
 
+        # ODrive (주행 모터)
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [FindPackageShare('odrive_bridge'), 'launch', 'odrive_bridge.launch.py']
+                )
+            ),
+        ),
+
+        # IMU
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [FindPackageShare('imu_publisher'), 'launch', 'imu.launch.py']
+                )
+            ),
+        ),
+
+        # Optical Flow
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [FindPackageShare('optical_flow_publisher'), 'launch', 'optical_flow.launch.py']
+                )
+            ),
+        ),
+
+        # 인지 (카메라 등)
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(perception_launch_path),
+        ),
+
+        # 추가 (선택)
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(extra_launch_path),
             condition=IfCondition(LaunchConfiguration("extra")),
         ),
 
+        # 조이스틱 (선택)
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(custom_robot_launch_path),
-            condition=IfCondition(LaunchConfiguration("custom_robot")),
-        )
+            PythonLaunchDescriptionSource(joy_launch_path),
+            condition=IfCondition(LaunchConfiguration("joy")),
+        ),
+
+        # 경광봉(beacon_node)은 별도 실행:
+        # ros2 launch vesc_bridge beacon.launch.py
     ])

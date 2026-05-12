@@ -1,3 +1,30 @@
+# =============================================================================
+# ⚠️ JAZZY 버전 — 현재 미사용 (Humble 환경에서 동작 안 함)
+# =============================================================================
+# 이 파일은 ROS2 Jazzy 시절 작성된 실물 운용 설정의 잔재입니다.
+# 현재 AED 프로젝트는 Humble로 마이그레이션되어 다음과 같이 동작합니다:
+#
+#   - 실제 워크플로우: navigation.launch.py → navigation_sim.yaml 로드
+#     (시뮬·실물 둘 다 navigation_sim.yaml 사용, use_sim_time 인자만 다름)
+#   - 이 파일을 로드하는 launch: slam.launch.py (현재 호출 경로 없음)
+#
+# 그대로 사용 시 발생하는 문제:
+#   - Jazzy 전용 파라미터로 노드 시작 실패:
+#     * bt_navigator: action_server_result_timeout, navigators, NavigateToPoseNavigator
+#     * AMCL: set_initial_pose / initial_pose_x/y/z/yaw/covariance_xx
+#     * recoveries_server (Humble은 behavior_server) + nav2_recoveries/Spin (→ nav2_behaviors/Spin)
+#     * collision_monitor, docking_server, loopback_simulator (Jazzy 신규 노드)
+#   - 사용자명 하드코딩: /home/woos/ (현재 환경은 /home/yws/)
+#
+# 보존 이유:
+#   - 다층 scan(scan_low/mid/high) + PointCloud2 통합, RotationShimController,
+#     collision_monitor 등 좋은 설계 참조용
+#   - 미래에 Humble 호환으로 마이그레이션할 때 base 파일
+#
+# 작업 권장:
+#   - Humble로 마이그레이션 시: 이 파일을 base로 navigation_sim.yaml에 반영
+#   - 그 외 시점에는 수정 금지 (Jazzy 시점 스냅샷 유지)
+# =============================================================================
 amcl:
   ros__parameters:
     use_sim_time: false

@@ -1,32 +1,41 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:property name="base_length" value="0.32" />
-  <xacro:property name="base_width" value="0.38" />
-  <xacro:property name="base_height" value="0.09" />
+  <!-- 충돌 박스: 본체 평판만 (라이다 마운트 제외)
+       Visual STL은 전체 형상 유지하지만, 충돌 박스가 라이다 위치를 포함하면
+       Gazebo lidar ray가 박스 내벽을 hit하여 phantom obstacle 발생 → 박스 상단을 라이다 아래로 -->
+  <xacro:property name="base_length" value="0.470" />
+  <xacro:property name="base_width" value="0.400" />
+  <xacro:property name="base_height" value="0.490" />
+  <!-- Z 범위: -0.102 ~ 0.388 (라이다 0.420 아래 3.2cm 마진) -->
+  <xacro:property name="base_origin_x" value="0.115" />
+  <xacro:property name="base_origin_y" value="0.000" />
+  <xacro:property name="base_origin_z" value="0.143" />
   <xacro:property name="base_mass" value="13" />
-  <xacro:property name="base_mesh_file" value="" />
+  <xacro:property name="base_mesh_file" value="file://$(find linorobot2_description)/meshes/aed_robot.stl" />
 
-  <xacro:property name="wheel_radius" value="0.0535" />
-  <xacro:property name="wheel_width" value="0.053" />
+  <!-- CAD 실측: 인휠 직경 139mm → 반지름 69.5mm -->
+  <xacro:property name="wheel_radius" value="0.0695" />
+  <xacro:property name="wheel_width" value="0.0385" />
   <!-- 앞 캐스터 1개 구성: 구동 바퀴를 중심보다 5cm 뒤로 배치해 후방 안정성 확보 -->
   <xacro:property name="wheel_pos_x" value="-0.05" />
-  <!-- wheel_pos_y = base_width / 2 = 0.38 / 2 -->
-  <xacro:property name="wheel_pos_y" value="0.19" />
-  <!-- wheel_pos_z = -(base_height / 2) = -(0.09 / 2), 바퀴 중심을 본체 바닥면에 정렬 -->
-  <xacro:property name="wheel_pos_z" value="-0.045" />
+  <!-- CAD 실측: 트랙폭 340mm / 2 = 170mm -->
+  <xacro:property name="wheel_pos_y" value="0.17" />
+  <!-- 바퀴 중심: base_link 기준 z=-0.09m (인휠모터 축 높이, 본체 밑판 57.5mm 위에 본체가 있도록) -->
+  <xacro:property name="wheel_pos_z" value="-0.09" />
   <xacro:property name="wheel_mass" value="0.3" />
   <xacro:property name="wheel_torque" value="20" />
   <xacro:property name="front_caster_wheel" value="true" />
   <xacro:property name="rear_caster_wheel" value="false" />
 
   <xacro:property name="wheel_mesh_file" value="" />
+  <!-- CAD 실측: RPLIDAR [87] 상단(스캔면) STEP Z=417mm -->
   <xacro:property name="laser_pose">
-    <origin xyz="0.0 0 0.095" rpy="0 0 0"/>
+    <origin xyz="0.08 0.0 0.420" rpy="0 0 0"/>
   </xacro:property>
 
-  <!-- 깊이 카메라: 본체 전면 중앙 높이 -->
+  <!-- CAD 실측: camera_module [40] STEP(51,-8,358)mm -->
   <xacro:property name="depth_sensor_pose">
-    <origin xyz="0.16 0.0 0.5" rpy="0 0 0"/>
+    <origin xyz="0.243 0.0 0.361" rpy="0 0 0"/>
   </xacro:property>
 
   <xacro:property name="rear_camera_sensor_pose">

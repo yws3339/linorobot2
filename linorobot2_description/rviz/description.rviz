@@ -54,17 +54,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        camera_depth_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_left_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_right_wheel_link:
+        front_caster_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -78,19 +78,19 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        rear_left_wheel_link:
+        left_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rear_right_wheel_link:
+        right_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
       Name: RobotModel
       TF Prefix: ""
-      Update Interval: 0
+      Update Interval: 0.05
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
@@ -102,19 +102,19 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        camera_depth_link:
+          Value: true
         camera_link:
           Value: true
-        front_left_wheel_link:
-          Value: true
-        front_right_wheel_link:
+        front_caster_wheel_link:
           Value: true
         imu_link:
           Value: true
         laser:
           Value: true
-        rear_left_wheel_link:
+        left_wheel_link:
           Value: true
-        rear_right_wheel_link:
+        right_wheel_link:
           Value: true
       Marker Scale: 0.10000000149011612
       Name: TF
@@ -125,20 +125,19 @@ Visualization Manager:
         base_footprint:
           base_link:
             camera_link:
-              {}
-            front_left_wheel_link:
-              {}
-            front_right_wheel_link:
+              camera_depth_link:
+                {}
+            front_caster_wheel_link:
               {}
             imu_link:
               {}
             laser:
               {}
-            rear_left_wheel_link:
+            left_wheel_link:
               {}
-            rear_right_wheel_link:
+            right_wheel_link:
               {}
-      Update Interval: 0
+      Update Interval: 0.05
       Value: true
     - Class: rviz_default_plugins/Axes
       Enabled: true

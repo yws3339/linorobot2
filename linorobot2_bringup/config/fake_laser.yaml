@@ -1,7 +1,8 @@
+# depth 이미지를 2D 레이저스캔으로 변환 (LiDAR 대체용, 단층)
 depthimage_to_laserscan:
   ros__parameters:
-    scan_time: 0.033
-    range_min: 0.25
-    range_max: 9.0
-    scan_height: 1
-    output_frame: camera_depth_link
+    scan_time: 0.033          # 스캔 주기 (초) — 1/30 ≈ 30Hz (L515 depth 실제 fps와 맞춰야 함)
+    range_min: 0.25           # 최소 감지 거리 (m) — L515 스펙 최소값
+    range_max: 9.0            # 최대 감지 거리 (m) — L515 스펙 최대값
+    scan_height: 1            # depth 이미지에서 샘플링할 수평 픽셀 행 수 (1 = 단층)
+    output_frame: camera_depth_link  # 스캔 데이터의 TF 프레임 (URDF 프레임명과 일치 필요)
