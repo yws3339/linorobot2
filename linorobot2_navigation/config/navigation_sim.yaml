@@ -120,7 +120,7 @@ bt_navigator_navigate_to_pose_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: True
-    controller_frequency: 20.0
+    controller_frequency: 50.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.001  # 2WD diff drive는 y=0, 표준값으로 정리
     min_theta_velocity_threshold: 0.001
@@ -193,8 +193,8 @@ controller_server:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 2.0
+      update_frequency: 10.0
+      publish_frequency: 5.0
       global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
@@ -395,7 +395,7 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     use_sim_time: True
-    smoothing_frequency: 20.0
+    smoothing_frequency: 50.0
     scale_velocities: False
     feedback: "CLOSED_LOOP"  # 대리석 슬립 환경에서 odom 피드백으로 보정
     max_velocity: [1.2, 0.0, 2.5]
