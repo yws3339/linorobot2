@@ -1,16 +1,10 @@
 <!--
-  표준 Nav2 BT (linorobot2 기본값):
-  - PipelineSequence: 1Hz로 경로 재계산하며 추종
-  - 추종/계획 실패 시 복구 액션을 RoundRobin으로 순환:
-    1) Wait 2초
-    2) Local + Global costmap 클리어
-    3) Spin 1.57rad (90° 회전)
-    4) BackUp 0.30m (속도 0.15m/s)
-  - 전체 최대 30회 재시도 후 ABORTED
-  - 시연 안전 메모: 펜스/라인테이프로 회전·후진 여유 공간 확보 필요
+  Humble 호환 BT: 장애물 대기 우선 (Jazzy navigate_w_obstacle_wait.xml 동작 차용)
+  - 경로 추종 실패 시 최대 30회 재시도 (군중 환경 대응)
+  - 복구 순서: Wait 2초 → costmap 클리어 → Spin 90° → BackUp 0.3m
+  - Jazzy 전용 노드(WouldAControllerRecoveryHelp 등) 및 error_code_id 제거
 -->
-
-<root BTCPP_format="4" main_tree_to_execute="MainTree">
+<root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <RecoveryNode number_of_retries="30" name="NavigateRecovery">
       <PipelineSequence name="NavigateWithReplanning">
@@ -18,39 +12,27 @@
         <PlannerSelector selected_planner="{selected_planner}" default_planner="GridBased" topic_name="planner_selector"/>
         <RateController hz="1.0">
           <RecoveryNode number_of_retries="1" name="ComputePathToPose">
-            <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}"/>
-            <Sequence>
-              <WouldAPlannerRecoveryHelp error_code="{compute_path_error_code}"/>
-              <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
-            </Sequence>
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/>
           </RecoveryNode>
         </RateController>
         <RecoveryNode number_of_retries="1" name="FollowPath">
-          <FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}"/>
-          <Sequence>
-            <WouldAControllerRecoveryHelp error_code="{follow_path_error_code}"/>
-            <ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/>
-          </Sequence>
+          <FollowPath path="{path}" controller_id="{selected_controller}"/>
+          <ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/>
         </RecoveryNode>
       </PipelineSequence>
-      <Sequence>
-        <Fallback>
-          <WouldAControllerRecoveryHelp error_code="{follow_path_error_code}"/>
-          <WouldAPlannerRecoveryHelp error_code="{compute_path_error_code}"/>
-        </Fallback>
-        <ReactiveFallback name="RecoveryFallback">
-          <GoalUpdated/>
-          <RoundRobin name="RecoveryActions">
-            <Wait wait_duration="2.0"/>
-            <Sequence name="ClearingActions">
-              <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
-              <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
-            </Sequence>
-            <Spin spin_dist="1.57" error_code_id="{spin_error_code}"/>
-            <BackUp backup_dist="0.30" backup_speed="0.15" error_code_id="{backup_code_id}"/>
-          </RoundRobin>
-        </ReactiveFallback>
-      </Sequence>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <Wait wait_duration="2.0"/>
+          <Sequence name="ClearingActions">
+            <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <Spin spin_dist="1.57"/>
+          <BackUp backup_dist="0.30" backup_speed="0.15"/>
+        </RoundRobin>
+      </ReactiveFallback>
     </RecoveryNode>
   </BehaviorTree>
 </root>
