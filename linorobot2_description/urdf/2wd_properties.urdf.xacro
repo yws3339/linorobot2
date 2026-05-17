@@ -18,8 +18,8 @@
   <xacro:property name="wheel_width" value="0.0385" />
   <!-- 앞 캐스터 1개 구성: 구동 바퀴를 중심보다 5cm 뒤로 배치해 후방 안정성 확보 -->
   <xacro:property name="wheel_pos_x" value="-0.05" />
-  <!-- CAD 실측: 트랙폭 340mm / 2 = 170mm -->
-  <xacro:property name="wheel_pos_y" value="0.17" />
+  <!-- 실측: 트랙폭 294mm / 2 = 147mm (CAD 340mm → 실측 보정) -->
+  <xacro:property name="wheel_pos_y" value="0.147" />
   <!-- 바퀴 중심: base_link 기준 z=-0.09m (인휠모터 축 높이, 본체 밑판 57.5mm 위에 본체가 있도록) -->
   <xacro:property name="wheel_pos_z" value="-0.09" />
   <xacro:property name="wheel_mass" value="0.3" />
