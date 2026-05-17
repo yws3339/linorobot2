@@ -7,7 +7,7 @@
   <xacro:property name="base_width" value="0.400" />
   <xacro:property name="base_height" value="0.490" />
   <!-- Z 범위: -0.102 ~ 0.388 (라이다 0.420 아래 3.2cm 마진) -->
-  <xacro:property name="base_origin_x" value="0.115" />
+  <xacro:property name="base_origin_x" value="0.110" />
   <xacro:property name="base_origin_y" value="0.000" />
   <xacro:property name="base_origin_z" value="0.143" />
   <xacro:property name="base_mass" value="13" />
