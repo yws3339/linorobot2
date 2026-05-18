@@ -140,8 +140,15 @@
       </skin>
       <animation name="standing">
         <filename>stand.dae</filename>
-        <interpolate_x>true</interpolate_x>
       </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="standing">
+          <waypoint><time>0</time><pose>8 0.5 0.95 1.5708 0 -1.5708</pose></waypoint>
+          <waypoint><time>1</time><pose>8 0.5 0.95 1.5708 0 -1.5708</pose></waypoint>
+        </trajectory>
+      </script>
     </actor>
 
     <!-- 쓰러진 사람 — actor(stand.dae)를 옆으로 눕힘 (roll 90°) + 충돌 박스 -->
@@ -162,8 +169,15 @@
       </skin>
       <animation name="standing">
         <filename>stand.dae</filename>
-        <interpolate_x>true</interpolate_x>
       </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="standing">
+          <waypoint><time>0</time><pose>8 -0.5 0.1 0 0 0</pose></waypoint>
+          <waypoint><time>1</time><pose>8 -0.5 0.1 0 0 0</pose></waypoint>
+        </trajectory>
+      </script>
     </actor>
 
     <physics type="ode">
