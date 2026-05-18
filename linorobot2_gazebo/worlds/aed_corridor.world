@@ -122,138 +122,65 @@
     </model>
 
     <!-- 서있는 사람 (인체 비율: 키 1.7m) — x=8, y=+0.5 -->
-    <model name="standing_person">
+    <!-- 서있는 사람 — actor(stand.dae) 실사 메쉬 + 충돌 박스 (Nav2 회피용) -->
+    <model name="standing_person_collision">
       <static>true</static>
+      <pose>8 0.5 0 0 0 0</pose>
+      <link name="link">
+        <collision name="body_col">
+          <pose>0 0 0.9 0 0 0</pose>
+          <geometry><cylinder><radius>0.25</radius><length>1.8</length></cylinder></geometry>
+        </collision>
+      </link>
+    </model>
+    <actor name="standing_person">
       <pose>8 0.5 0 0 0 -1.5708</pose>
-      <link name="link">
-        <!-- 좌측 다리 -->
-        <collision name="leg_l_col">
-          <pose>0 0.07 0.425 0 0 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-        </collision>
-        <visual name="leg_l_vis">
-          <pose>0 0.07 0.425 0 0 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-          <material><ambient>0.1 0.15 0.4 1</ambient><diffuse>0.15 0.2 0.55 1</diffuse></material>
-        </visual>
-        <!-- 우측 다리 -->
-        <collision name="leg_r_col">
-          <pose>0 -0.07 0.425 0 0 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-        </collision>
-        <visual name="leg_r_vis">
-          <pose>0 -0.07 0.425 0 0 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-          <material><ambient>0.1 0.15 0.4 1</ambient><diffuse>0.15 0.2 0.55 1</diffuse></material>
-        </visual>
-        <!-- 몸통 -->
-        <collision name="torso_col">
-          <pose>0 0 1.175 0 0 0</pose>
-          <geometry><box><size>0.25 0.42 0.65</size></box></geometry>
-        </collision>
-        <visual name="torso_vis">
-          <pose>0 0 1.175 0 0 0</pose>
-          <geometry><box><size>0.25 0.42 0.65</size></box></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <!-- 좌측 팔 -->
-        <collision name="arm_l_col">
-          <pose>0 0.26 1.2 0 0 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-        </collision>
-        <visual name="arm_l_vis">
-          <pose>0 0.26 1.2 0 0 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <!-- 우측 팔 -->
-        <collision name="arm_r_col">
-          <pose>0 -0.26 1.2 0 0 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-        </collision>
-        <visual name="arm_r_vis">
-          <pose>0 -0.26 1.2 0 0 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <!-- 머리 -->
-        <collision name="head_col">
-          <pose>0 0 1.625 0 0 0</pose>
-          <geometry><sphere><radius>0.13</radius></sphere></geometry>
-        </collision>
-        <visual name="head_vis">
-          <pose>0 0 1.625 0 0 0</pose>
-          <geometry><sphere><radius>0.13</radius></sphere></geometry>
-          <material><ambient>0.9 0.7 0.55 1</ambient><diffuse>1.0 0.8 0.65 1</diffuse></material>
-        </visual>
-      </link>
-    </model>
+      <skin>
+        <filename>stand.dae</filename>
+      </skin>
+      <animation name="standing">
+        <filename>stand.dae</filename>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="standing">
+          <waypoint><time>0</time><pose>8 0.5 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>5</time><pose>8 0.5 0 0 0 -1.5708</pose></waypoint>
+        </trajectory>
+      </script>
+    </actor>
 
-    <!-- 쓰러진 사람 (옆으로 누운 상태, 머리는 +x 방향) — x=8, y=-0.5 -->
-    <model name="fallen_person">
+    <!-- 쓰러진 사람 — actor(stand.dae)를 옆으로 눕힘 (roll 90°) + 충돌 박스 -->
+    <model name="fallen_person_collision">
       <static>true</static>
-      <pose>8 -0.5 0 0 0 0</pose>
+      <pose>8 -0.5 0.1 0 0 0</pose>
       <link name="link">
-        <!-- 다리 (x축으로 누움) -->
-        <collision name="leg_l_col">
-          <pose>-0.425 0.07 0.1 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
+        <collision name="body_col">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><box><size>1.7 0.5 0.3</size></box></geometry>
         </collision>
-        <visual name="leg_l_vis">
-          <pose>-0.425 0.07 0.1 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-          <material><ambient>0.1 0.15 0.4 1</ambient><diffuse>0.15 0.2 0.55 1</diffuse></material>
-        </visual>
-        <collision name="leg_r_col">
-          <pose>-0.425 -0.07 0.1 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-        </collision>
-        <visual name="leg_r_vis">
-          <pose>-0.425 -0.07 0.1 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.06</radius><length>0.85</length></cylinder></geometry>
-          <material><ambient>0.1 0.15 0.4 1</ambient><diffuse>0.15 0.2 0.55 1</diffuse></material>
-        </visual>
-        <!-- 몸통 -->
-        <collision name="torso_col">
-          <pose>0.325 0 0.13 0 0 0</pose>
-          <geometry><box><size>0.65 0.42 0.25</size></box></geometry>
-        </collision>
-        <visual name="torso_vis">
-          <pose>0.325 0 0.13 0 0 0</pose>
-          <geometry><box><size>0.65 0.42 0.25</size></box></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <!-- 팔 -->
-        <collision name="arm_l_col">
-          <pose>0.35 0.26 0.13 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-        </collision>
-        <visual name="arm_l_vis">
-          <pose>0.35 0.26 0.13 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <collision name="arm_r_col">
-          <pose>0.35 -0.26 0.13 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-        </collision>
-        <visual name="arm_r_vis">
-          <pose>0.35 -0.26 0.13 0 1.5708 0</pose>
-          <geometry><cylinder><radius>0.05</radius><length>0.6</length></cylinder></geometry>
-          <material><ambient>0.7 0.15 0.15 1</ambient><diffuse>0.9 0.2 0.2 1</diffuse></material>
-        </visual>
-        <!-- 머리 -->
-        <collision name="head_col">
-          <pose>0.78 0 0.13 0 0 0</pose>
-          <geometry><sphere><radius>0.13</radius></sphere></geometry>
-        </collision>
-        <visual name="head_vis">
-          <pose>0.78 0 0.13 0 0 0</pose>
-          <geometry><sphere><radius>0.13</radius></sphere></geometry>
-          <material><ambient>0.9 0.7 0.55 1</ambient><diffuse>1.0 0.8 0.65 1</diffuse></material>
-        </visual>
       </link>
     </model>
+    <actor name="fallen_person">
+      <pose>8 -0.5 0.1 1.5708 0 0</pose>
+      <skin>
+        <filename>stand.dae</filename>
+      </skin>
+      <animation name="standing">
+        <filename>stand.dae</filename>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="standing">
+          <waypoint><time>0</time><pose>8 -0.5 0.1 1.5708 0 0</pose></waypoint>
+          <waypoint><time>5</time><pose>8 -0.5 0.1 1.5708 0 0</pose></waypoint>
+        </trajectory>
+      </script>
+    </actor>
 
     <physics type="ode">
       <real_time_update_rate>1000</real_time_update_rate>
