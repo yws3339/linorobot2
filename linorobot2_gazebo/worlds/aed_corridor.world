@@ -134,7 +134,6 @@
       </link>
     </model>
     <actor name="standing_person">
-      <pose>8 0.5 0 0 0 -1.5708</pose>
       <skin>
         <filename>stand.dae</filename>
       </skin>
@@ -146,8 +145,8 @@
         <loop>true</loop>
         <auto_start>true</auto_start>
         <trajectory id="0" type="standing">
-          <waypoint><time>0</time><pose>8 0.5 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>5</time><pose>8 0.5 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>0</time><pose>8 0.5 0.95 1.5708 0 -1.5708</pose></waypoint>
+          <waypoint><time>5</time><pose>8 0.5 0.95 1.5708 0 -1.5708</pose></waypoint>
         </trajectory>
       </script>
     </actor>
