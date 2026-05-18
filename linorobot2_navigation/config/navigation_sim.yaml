@@ -391,7 +391,7 @@ velocity_smoother:
     use_sim_time: True
     smoothing_frequency: 50.0
     scale_velocities: False
-    feedback: "CLOSED_LOOP"  # 대리석 슬립 환경에서 odom 피드백으로 보정
+    feedback: "OPEN_LOOP"  # 시뮬에서는 OPEN_LOOP 권장 (실물 대리석 슬립 대응 시 CLOSED_LOOP로 변경)
     max_velocity: [1.2, 0.0, 2.5]
     min_velocity: [-1.2, 0.0, -2.5]
     max_accel: [2.5, 0.0, 3.2]
