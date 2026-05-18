@@ -13,27 +13,57 @@
 
 RViz의 "2D Pose Estimate"로 초기 위치 보정 필수.
 """
+import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
+from nav2_common.launch import RewrittenYaml
 
 
-def generate_launch_description():
+def _setup(context):
+    nav_pkg = get_package_share_directory('linorobot2_navigation')
+    bt_xml = os.path.join(nav_pkg, 'behavior_trees', 'navigate_w_obstacle_wait.xml')
+    src_params = os.path.join(nav_pkg, 'config', 'navigation_sim.yaml')
+
+    params_file = RewrittenYaml(
+        source_file=src_params,
+        param_rewrites={'default_nav_to_pose_bt_xml': bt_xml},
+        convert_types=True,
+    )
+
     localization_launch_path = PathJoinSubstitution(
         [FindPackageShare('nav2_bringup'), 'launch', 'localization_launch.py']
     )
     nav2_launch_path = PathJoinSubstitution(
         [FindPackageShare('nav2_bringup'), 'launch', 'navigation_launch.py']
     )
-    params_file = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'config', 'navigation_sim.yaml']
-    )
+
+    return [
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(localization_launch_path),
+            launch_arguments={
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'map': LaunchConfiguration('map'),
+                'params_file': params_file,
+            }.items(),
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(nav2_launch_path),
+            launch_arguments={
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'params_file': params_file,
+            }.items(),
+        ),
+    ]
+
+
+def generate_launch_description():
     default_map = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'), 'maps', 'aed_corridor.yaml']
     )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             name='use_sim_time',
@@ -45,23 +75,5 @@ def generate_launch_description():
             default_value=default_map,
             description='맵 yaml 파일 경로 (기본: aed_corridor.yaml)',
         ),
-
-        # 1) Localization: map_server + AMCL
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(localization_launch_path),
-            launch_arguments={
-                'use_sim_time': LaunchConfiguration('use_sim_time'),
-                'map': LaunchConfiguration('map'),
-                'params_file': params_file,
-            }.items(),
-        ),
-
-        # 2) Nav2: 경로 계획·추종
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(nav2_launch_path),
-            launch_arguments={
-                'use_sim_time': LaunchConfiguration('use_sim_time'),
-                'params_file': params_file,
-            }.items(),
-        ),
+        OpaqueFunction(function=_setup),
     ])
