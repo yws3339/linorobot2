@@ -11,7 +11,7 @@
   <xacro:property name="base_origin_y" value="0.000" />
   <xacro:property name="base_origin_z" value="0.143" />
   <xacro:property name="base_mass" value="13" />
-  <xacro:property name="base_mesh_file" value="file://$(find linorobot2_description)/meshes/aed_robot.stl" />
+  <xacro:property name="base_mesh_file" value="package://linorobot2_description/meshes/aed_robot.stl" />
 
   <!-- CAD 실측: 인휠 직경 139mm → 반지름 69.5mm -->
   <xacro:property name="wheel_radius" value="0.0695" />
