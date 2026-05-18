@@ -39,7 +39,7 @@
   </xacro:property>
 
   <xacro:property name="rear_camera_sensor_pose">
-    <origin xyz="-0.14 0.0 0.045" rpy="0 0 3.14159"/>
+    <origin xyz="-0.14 0.0 0.045" rpy="0 0 0"/>
   </xacro:property>
 
 </robot>
