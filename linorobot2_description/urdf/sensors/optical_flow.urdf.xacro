@@ -1,0 +1,11 @@
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="optical_flow">
+    <link name="optical_flow_link"/>
+
+    <joint name="optical_flow_to_base_link" type="fixed">
+      <parent link="base_link"/>
+      <child link="optical_flow_link"/>
+      <origin xyz="0 0 -0.0955" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+</robot>
