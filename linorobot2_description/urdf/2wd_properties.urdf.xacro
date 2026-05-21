@@ -28,9 +28,10 @@
   <xacro:property name="rear_caster_wheel" value="false" />
 
   <xacro:property name="wheel_mesh_file" value="" />
-  <!-- CAD 실측: RPLIDAR [87] 상단(스캔면) STEP Z=417mm -->
+  <!-- CAD 실측: RPLIDAR [87] 상단(스캔면) STEP Z=417mm
+       rpy yaw=pi: 라이다가 180° 회전 마운트되어 실측 보정 (2026-05-22) -->
   <xacro:property name="laser_pose">
-    <origin xyz="0.13 0.0 0.420" rpy="0 0 0"/>
+    <origin xyz="0.13 0.0 0.420" rpy="0 0 ${pi}"/>
   </xacro:property>
 
   <!-- CAD 실측: camera_module [40] STEP(51,-8,358)mm -->
