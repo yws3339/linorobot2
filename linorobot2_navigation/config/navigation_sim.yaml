@@ -149,9 +149,9 @@ controller_server:
     FollowPath:
       plugin: "nav2_rotation_shim_controller::RotationShimController"
       primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      angular_dist_threshold: 0.3      # 17° 이상이면 RotationShim 발동 (이전 45° → 17°)
-      angular_disengage_threshold: 0.15  # 8.6° 이하로 좁아지면 RPP로 전환
-      forward_sampling_distance: 0.6
+      angular_dist_threshold: 0.15     # 8.6° 이상이면 RotationShim 발동 (모터 정지 마찰 강함)
+      angular_disengage_threshold: 0.08  # 4.6° 이하로 좁아지면 RPP로 전환
+      forward_sampling_distance: 0.3   # path 시작 0.3m 지점 각도 차이 측정 (이전 0.6m)
       simulate_ahead_time: 1.2
       rotate_to_goal_heading: false
       rotate_to_heading_once: true
