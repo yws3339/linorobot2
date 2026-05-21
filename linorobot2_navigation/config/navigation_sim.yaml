@@ -176,8 +176,8 @@ controller_server:
       regulated_linear_scaling_min_speed: 0.25
       use_rotate_to_heading: true
       allow_reversing: false
-      rotate_to_heading_min_theta: 0.785
-      max_angular_accel: 3.2
+      rotate_to_heading_min_theta: 0.3      # RPP 자체 rotate_to_heading 임계값 (RotationShim과 일치)
+      max_angular_accel: 1.5                # 회전 가속도 부드럽게 (3.2 → 1.5)
       max_robot_pose_search_dist: 10.0
       stateful: true
       use_interpolation: false
@@ -387,10 +387,10 @@ velocity_smoother:
     smoothing_frequency: 50.0
     scale_velocities: False
     feedback: "OPEN_LOOP"  # 시뮬에서는 OPEN_LOOP 권장 (실물 대리석 슬립 대응 시 CLOSED_LOOP로 변경)
-    max_velocity: [0.5, 0.0, 2.0]
-    min_velocity: [-0.5, 0.0, -2.0]
-    max_accel: [1.0, 0.0, 2.0]
-    max_decel: [-1.0, 0.0, -2.0]
+    max_velocity: [0.5, 0.0, 1.0]         # angular 상한 2.0 → 1.0 (부드러움)
+    min_velocity: [-0.5, 0.0, -1.0]
+    max_accel: [1.0, 0.0, 1.0]            # angular 가속도 2.0 → 1.0
+    max_decel: [-1.0, 0.0, -1.0]
     odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
