@@ -145,17 +145,9 @@ controller_server:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.35
       yaw_goal_tolerance: 0.35
-    # RotationShimController (Jazzy 동일 구조) + RPP
+    # RotationShim 우회: RPP 직접 사용 (use_rotate_to_heading: true로 큰 회전 자체 처리)
     FollowPath:
-      plugin: "nav2_rotation_shim_controller::RotationShimController"
-      primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      angular_dist_threshold: 0.15     # 8.6° 이상이면 RotationShim 발동 (모터 정지 마찰 강함)
-      angular_disengage_threshold: 0.08  # 4.6° 이하로 좁아지면 RPP로 전환
-      forward_sampling_distance: 0.3   # path 시작 0.3m 지점 각도 차이 측정 (이전 0.6m)
-      simulate_ahead_time: 1.2
-      rotate_to_goal_heading: false
-      rotate_to_heading_once: true
-      use_path_orientations: false
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
       desired_linear_vel: 0.5
       lookahead_dist: 0.5
       min_lookahead_dist: 0.2
