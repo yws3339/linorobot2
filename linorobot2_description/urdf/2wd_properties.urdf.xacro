@@ -29,9 +29,10 @@
 
   <xacro:property name="wheel_mesh_file" value="" />
   <!-- CAD 실측: RPLIDAR [87] 상단(스캔면) STEP Z=417mm
-       rpy yaw=pi: 라이다가 180° 회전 마운트되어 실측 보정 (2026-05-22) -->
+       rpy roll=pi: 라이다 데이터 좌표계가 ROS 표준과 좌우 미러링 관계
+       (라이다 펌웨어 회전 방향 차이, 2026-05-22 실측 보정) -->
   <xacro:property name="laser_pose">
-    <origin xyz="0.13 0.0 0.420" rpy="0 0 ${pi}"/>
+    <origin xyz="0.13 0.0 0.420" rpy="${pi} 0 0"/>
   </xacro:property>
 
   <!-- CAD 실측: camera_module [40] STEP(51,-8,358)mm -->
