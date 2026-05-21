@@ -167,9 +167,9 @@ controller_server:
       regulated_linear_scaling_min_speed: 0.25
       use_rotate_to_heading: true
       allow_reversing: false
-      rotate_to_heading_min_theta: 0.1      # 5.7° 이상이면 rotate_to_heading 모드 (작게)
-      max_angular_accel: 5.0                # 가속 한계 풀어서 즉시 회전 (디버그)
-      use_collision_detection: false        # 가짜 장애물 정지 차단 (디버그)
+      rotate_to_heading_min_theta: 0.1
+      max_angular_accel: 75.0               # 한 cycle(20ms)에 1.5 rad/s 가속 가능 — 즉시 max에 도달
+      use_collision_detection: false
       max_robot_pose_search_dist: 10.0
       stateful: true
       use_interpolation: false
