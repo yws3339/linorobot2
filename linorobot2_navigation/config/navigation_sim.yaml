@@ -383,8 +383,8 @@ velocity_smoother:
     feedback: "OPEN_LOOP"  # 시뮬에서는 OPEN_LOOP 권장 (실물 대리석 슬립 대응 시 CLOSED_LOOP로 변경)
     max_velocity: [0.5, 0.0, 1.0]
     min_velocity: [-0.5, 0.0, -1.0]
-    max_accel: [1.0, 0.0, 2.5]            # angular 1.0 → 2.5 (회전 시작 빠르게, 200ms 내 max 도달)
-    max_decel: [-1.0, 0.0, -2.5]
+    max_accel: [1.0, 0.0, 5.0]            # angular 가속 2.5 → 5.0 (100ms 내 0.5 rad/s 도달)
+    max_decel: [-1.0, 0.0, -5.0]
     odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
