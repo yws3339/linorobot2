@@ -158,7 +158,6 @@ controller_server:
       use_velocity_scaled_lookahead_dist: false
       min_approach_linear_velocity: 0.05
       approach_velocity_scaling_dist: 0.5
-      use_collision_detection: true
       max_allowed_time_to_collision_up_to_carrot: 1.2
       use_regulated_linear_velocity_scaling: true
       use_fixed_curvature_lookahead: false
@@ -168,8 +167,9 @@ controller_server:
       regulated_linear_scaling_min_speed: 0.25
       use_rotate_to_heading: true
       allow_reversing: false
-      rotate_to_heading_min_theta: 0.3      # RPP 자체 rotate_to_heading 임계값 (RotationShim과 일치)
-      max_angular_accel: 1.5                # 회전 가속도 부드럽게 (3.2 → 1.5)
+      rotate_to_heading_min_theta: 0.1      # 5.7° 이상이면 rotate_to_heading 모드 (작게)
+      max_angular_accel: 5.0                # 가속 한계 풀어서 즉시 회전 (디버그)
+      use_collision_detection: false        # 가짜 장애물 정지 차단 (디버그)
       max_robot_pose_search_dist: 10.0
       stateful: true
       use_interpolation: false
