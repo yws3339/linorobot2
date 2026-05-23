@@ -231,7 +231,7 @@ local_costmap:
           marking: true
           clearing: true
           obstacle_range: 4.0
-          min_obstacle_height: 0.05   # 바닥 노이즈 제거
+          min_obstacle_height: 0.30   # 바닥 노이즈 제거
           max_obstacle_height: 1.5
           inf_is_valid: false
           voxel_filter: true
@@ -254,7 +254,7 @@ global_costmap:
       stvl_layer:
         plugin: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"
         enabled: true
-        voxel_decay: 15.0             # global은 더 오래 기억 (정적 장애물 추적)
+        voxel_decay: 3.0             # global은 더 오래 기억 (정적 장애물 추적)
         decay_model: 0
         voxel_size: 0.05
         track_unknown_space: true
@@ -285,7 +285,7 @@ global_costmap:
           marking: true
           clearing: true
           obstacle_range: 4.0
-          min_obstacle_height: 0.05
+          min_obstacle_height: 0.30
           max_obstacle_height: 1.5
           inf_is_valid: false
           voxel_filter: true
