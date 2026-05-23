@@ -49,9 +49,10 @@ def generate_launch_description():
             launch_arguments={
                 'pointcloud.enable': 'true',
                 'ordered_pc': 'true',
-                'initial_reset': 'true',
-                'depth_module.profile': '320,240,30',
-                'rgb_camera.profile': '640,480,15'
+                'initial_reset': 'false',
+                'depth_module.profile': '320,240,15',
+                'rgb_camera.profile': '640,480,15',
+                'align_depth.enable': 'true'
             }.items()   
         ),
 
