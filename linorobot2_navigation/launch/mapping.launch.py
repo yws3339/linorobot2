@@ -24,6 +24,7 @@ def _setup(context):
     nav_pkg = get_package_share_directory('linorobot2_navigation')
     bt_xml = os.path.join(nav_pkg, 'behavior_trees', 'navigate_w_obstacle_wait.xml')
     src_params = os.path.join(nav_pkg, 'config', 'navigation_sim.yaml')
+    slam_params = os.path.join(nav_pkg, 'config', 'slam_params.yaml')
 
     # BT XML 절대경로를 머신별 install 경로로 동적 치환
     params_file = RewrittenYaml(
@@ -44,6 +45,7 @@ def _setup(context):
             PythonLaunchDescriptionSource(slam_launch_path),
             launch_arguments={
                 'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'slam_params_file': slam_params,
             }.items(),
         ),
         IncludeLaunchDescription(

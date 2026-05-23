@@ -37,7 +37,7 @@ amcl:
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
-    scan_topic: scan
+    scan_topic: scan_merged
     # 자동 초기 위치: 로봇이 항상 맵 원점(0,0,0)에서 출발 (Gazebo spawn 위치 = 매핑 시작점)
     # 다른 시작점이면 false로 두고 RViz의 "2D Pose Estimate"로 수동 설정
     set_initial_pose: true
@@ -212,12 +212,12 @@ local_costmap:
         publish_voxel_map: true
         transform_tolerance: 0.2
         mapping_mode: false
-        # 실물: RPLIDAR 360° + L515 PointCloud2 직접 입력
-        # 시뮬: L515 PC2 미발행 시 자동 무시 (RPLIDAR만 동작)
-        observation_sources: rplidar_mark l515_mark
+        # /scan_merged = RPLIDAR /scan + L515 PointCloud2 변환 /scan_low (scan_merger 노드 출력)
+        # L515 PointCloud2 직접 입력 폐기 (RSUSB + 햇빛 + 가림으로 노이즈 문제)
+        observation_sources: rplidar_mark
         rplidar_mark:
           data_type: LaserScan
-          topic: /scan
+          topic: /scan_merged
           marking: true
           clearing: true
           obstacle_range: 4.0
@@ -225,17 +225,6 @@ local_costmap:
           max_obstacle_height: 2.0
           inf_is_valid: false
           voxel_filter: false
-        l515_mark:
-          data_type: PointCloud2
-          topic: /camera/depth/color/points
-          marking: true
-          clearing: true
-          obstacle_range: 4.0
-          min_obstacle_height: 0.05   # 바닥 노이즈 제거
-          max_obstacle_height: 1.5
-          inf_is_valid: false
-          voxel_filter: true
-          clear_after_reading: true
       always_send_full_costmap: True
 
 global_costmap:
@@ -268,10 +257,10 @@ global_costmap:
         publish_voxel_map: false      # global은 시각화 비활성화 (부하 절감)
         transform_tolerance: 0.2
         mapping_mode: false
-        observation_sources: rplidar_mark l515_mark
+        observation_sources: rplidar_mark
         rplidar_mark:
           data_type: LaserScan
-          topic: /scan
+          topic: /scan_merged
           marking: true
           clearing: true
           obstacle_range: 4.0
@@ -279,17 +268,6 @@ global_costmap:
           max_obstacle_height: 2.0
           inf_is_valid: false
           voxel_filter: false
-        l515_mark:
-          data_type: PointCloud2
-          topic: /camera/depth/color/points
-          marking: true
-          clearing: true
-          obstacle_range: 4.0
-          min_obstacle_height: 0.05
-          max_obstacle_height: 1.5
-          inf_is_valid: false
-          voxel_filter: true
-          clear_after_reading: true
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
