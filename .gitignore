@@ -1,3 +1,5 @@
 log
 build
 install
+# 시연장 매핑 결과 (머신 로컬 보관)
+linorobot2_navigation/maps/venue_map.*
