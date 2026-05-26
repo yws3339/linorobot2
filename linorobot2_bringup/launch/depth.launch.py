@@ -52,7 +52,9 @@ def generate_launch_description():
                 'initial_reset': 'false',
                 'depth_module.profile': '320,240,15',
                 'rgb_camera.profile': '640,480,15',
-                'align_depth.enable': 'false'
+                'align_depth.enable': 'false',
+                'depth_module.global_time_enabled': 'true',
+                'rgb_camera.global_time_enabled': 'true'
             }.items()   
         ),
 
