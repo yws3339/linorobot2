@@ -36,9 +36,14 @@ def generate_launch_description():
     }
     return LaunchDescription([
         DeclareLaunchArgument(
-            name='sensor', 
+            name='sensor',
             default_value='realsense',
             description='Sensor to launch'
+        ),
+        DeclareLaunchArgument(
+            name='pointcloud',
+            default_value='false',
+            description='pointcloud 생성 (SLAM 매핑 시에만 true — 자율주행은 라이다 전용이라 불필요)'
         ),
 
         IncludeLaunchDescription(
@@ -47,7 +52,7 @@ def generate_launch_description():
             )),
             condition=LaunchConfigurationEquals('sensor', 'realsense'),
             launch_arguments={
-                'pointcloud.enable': 'true',
+                'pointcloud.enable': LaunchConfiguration('pointcloud'),
                 'ordered_pc': 'true',
                 'initial_reset': 'false',
                 'depth_module.profile': '320,240,15',
