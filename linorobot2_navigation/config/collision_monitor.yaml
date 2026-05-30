@@ -1,0 +1,26 @@
+collision_monitor:
+  ros__parameters:
+    use_sim_time: false            # launch에서 override (시뮬 true / 실물 false)
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel"
+    cmd_vel_out_topic: "cmd_vel_safe"
+    transform_tolerance: 0.3
+    source_timeout: 1.0
+    base_shift_correction: True
+    stop_pub_timeout: 2.0
+    polygons: ["FootprintApproach"]
+    FootprintApproach:
+      type: "polygon"
+      action_type: "approach"
+      footprint_topic: "/local_costmap/published_footprint"
+      time_before_collision: 1.2
+      simulation_time_step: 0.1
+      max_points: 5
+      visualize: True
+      enabled: True
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "/scan_merged"
+      enabled: True
