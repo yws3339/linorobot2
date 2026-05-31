@@ -37,7 +37,7 @@ amcl:
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
-    scan_topic: scan_merged
+    scan_topic: scan
     # 자동 초기 위치: 로봇이 항상 맵 원점(0,0,0)에서 출발 (Gazebo spawn 위치 = 매핑 시작점)
     # 다른 시작점이면 false로 두고 RViz의 "2D Pose Estimate"로 수동 설정
     set_initial_pose: true
@@ -212,12 +212,12 @@ local_costmap:
         publish_voxel_map: true
         transform_tolerance: 0.2
         mapping_mode: false
-        # /scan_merged = RPLIDAR /scan + L515 PointCloud2 변환 /scan_low (scan_merger 노드 출력)
-        # L515 PointCloud2 직접 입력 폐기 (RSUSB + 햇빛 + 가림으로 노이즈 문제)
+        # /scan = scan_mask(RPLIDAR scan_raw 가림영역 마스킹) 출력. RPLIDAR 단일 소스.
+        # scan_merger(/scan_merged) 은퇴 — Python 중계 홉이 AMCL 입력 jitter 유발 (2026-05-31)
         observation_sources: rplidar_mark
         rplidar_mark:
           data_type: LaserScan
-          topic: /scan_merged
+          topic: /scan
           marking: true
           clearing: true
           obstacle_range: 4.0
@@ -260,7 +260,7 @@ global_costmap:
         observation_sources: rplidar_mark
         rplidar_mark:
           data_type: LaserScan
-          topic: /scan_merged
+          topic: /scan
           marking: true
           clearing: true
           obstacle_range: 4.0

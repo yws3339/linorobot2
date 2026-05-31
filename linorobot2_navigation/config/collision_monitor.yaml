@@ -22,5 +22,5 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "/scan_merged"
+      topic: "/scan"
       enabled: True
