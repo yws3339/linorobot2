@@ -45,6 +45,16 @@ def generate_launch_description():
             default_value='false',
             description='pointcloud 생성 (SLAM 매핑 시에만 true — 자율주행은 라이다 전용이라 불필요)'
         ),
+        DeclareLaunchArgument(
+            name='enable_color',
+            default_value='true',
+            description='RGB 스트림 활성화 (도착 후 인지 게이팅 — aed_start는 false로 기동)'
+        ),
+        DeclareLaunchArgument(
+            name='enable_depth',
+            default_value='true',
+            description='Depth 스트림 활성화 (도착 후 인지 게이팅 — aed_start는 false로 기동)'
+        ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(PathJoinSubstitution(
@@ -59,8 +69,10 @@ def generate_launch_description():
                 'rgb_camera.profile': '640,480,15',
                 'align_depth.enable': 'false',
                 'depth_module.global_time_enabled': 'true',
-                'rgb_camera.global_time_enabled': 'true'
-            }.items()   
+                'rgb_camera.global_time_enabled': 'true',
+                'enable_color': LaunchConfiguration('enable_color'),
+                'enable_depth': LaunchConfiguration('enable_depth')
+            }.items()
         ),
 
         IncludeLaunchDescription(
