@@ -144,7 +144,7 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.35
-      yaw_goal_tolerance: 0.35
+      yaw_goal_tolerance: 3.14
     # RotationShim 우회: RPP 직접 사용 (use_rotate_to_heading: true로 큰 회전 자체 처리)
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
