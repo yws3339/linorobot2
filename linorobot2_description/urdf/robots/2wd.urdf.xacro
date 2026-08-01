@@ -44,11 +44,13 @@
     mass="${wheel_mass}"
   />
 
+  <!-- caster_x: rescuepang_v3 CAD 실측 접지점 X=595mm (좌우 Y=±191, 단일 중앙 캐스터로 근사).
+       구 0.291은 새 무게중심(base_origin_x=0.290)과 겹쳐 구동바퀴 하중이 0%가 됨 -->
   <xacro:if value="${front_caster_wheel}">
     <xacro:caster_wheel
       side="front"
       mass="0.01"
-      caster_x="0.291"
+      caster_x="0.595"
       caster_radius="0.060"
       wheel_radius="${wheel_radius}"
       wheel_pos_z="${wheel_pos_z}"
@@ -73,7 +75,9 @@
     <xacro:insert_block name="laser_pose" />
   </xacro:generic_laser>
   
-  <xacro:depth_sensor>
+  <!-- 카메라 리니어 액추에이터 스트로크 150mm (실물 사양).
+       depth_sensor_pose는 수납 위치이며, 전개 시 +X로 최대 0.15m 이동 -->
+  <xacro:depth_sensor stroke="${camera_boom_stroke}">
     <xacro:insert_block name="depth_sensor_pose" />
   </xacro:depth_sensor>
 

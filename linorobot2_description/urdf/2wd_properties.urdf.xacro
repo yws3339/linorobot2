@@ -3,23 +3,30 @@
   <!-- 충돌 박스: 본체 평판만 (라이다 마운트 제외)
        Visual STL은 전체 형상 유지하지만, 충돌 박스가 라이다 위치를 포함하면
        Gazebo lidar ray가 박스 내벽을 hit하여 phantom obstacle 발생 → 박스 상단을 라이다 아래로 -->
-  <xacro:property name="base_length" value="0.470" />
-  <xacro:property name="base_width" value="0.400" />
+  <!-- rescuepang_v3.1 CAD 실측: 섀시 X[-69.5,650] Y[±243.5] (전방 돌출부 X650~831은 주행 중 수납이라 제외) -->
+  <xacro:property name="base_length" value="0.720" />
+  <xacro:property name="base_width" value="0.487" />
   <xacro:property name="base_height" value="0.490" />
-  <!-- Z 범위: -0.102 ~ 0.388 (라이다 0.420 아래 3.2cm 마진) -->
-  <xacro:property name="base_origin_x" value="0.160" />
+  <!-- Z 범위: -0.102 ~ 0.388 (라이다 0.420 아래 3.2cm 마진) — 높이/Z중심은 기존 유지 -->
+  <xacro:property name="base_origin_x" value="0.290" />
   <xacro:property name="base_origin_y" value="0.000" />
   <xacro:property name="base_origin_z" value="0.143" />
   <xacro:property name="base_mass" value="13" />
-  <xacro:property name="base_mesh_file" value="package://linorobot2_description/meshes/aed_robot.stl" />
+  <!-- rescuepang_v3.1.stl: 메시 +X=전방이라 회전 불필요. base_link가 메시 (-510,190,0)에 오도록 오프셋.
+       (메시 실측: 인휠 직경 139mm→중심 X=-510, 좌우바퀴 Y=5/375→중심선 190, 메시 Z=0이 base_link 높이)
+       v3→v3.1은 뎁스카메라(L515)만 추가, 바퀴·라이다 기준점 및 외곽 치수 완전 동일 → 아래 값 그대로 유효 -->
+  <xacro:property name="base_mesh_file" value="package://linorobot2_description/meshes/rescuepang_v3.1.stl" />
+  <xacro:property name="base_mesh_xyz" value="0.510 -0.190 0.000" />
+  <xacro:property name="base_mesh_rpy" value="0 0 0" />
 
   <!-- CAD 실측: 인휠 직경 139mm → 반지름 69.5mm -->
   <xacro:property name="wheel_radius" value="0.0695" />
   <xacro:property name="wheel_width" value="0.0385" />
   <!-- base_link = 회전중심 (양 바퀴 축 중점). 바퀴는 base_link 원점에 위치 -->
   <xacro:property name="wheel_pos_x" value="0.0" />
-  <!-- 실측: 트랙폭 294mm / 2 = 147mm (CAD 340mm → 실측 보정) -->
-  <xacro:property name="wheel_pos_y" value="0.147" />
+  <!-- rescuepang_v3.1 CAD 실측: 트랙폭 370mm / 2 = 185mm (좌우 인휠 중심 Y=5/375).
+       ※ 실물(odrive_params.yaml track_width=0.294)은 구 조립체 실측값이라 v3 조립 후 재측정 필요. -->
+  <xacro:property name="wheel_pos_y" value="0.185" />
   <!-- 바퀴 중심: base_link 기준 z=-0.09m (인휠모터 축 높이, 본체 밑판 57.5mm 위에 본체가 있도록) -->
   <xacro:property name="wheel_pos_z" value="-0.09" />
   <xacro:property name="wheel_mass" value="0.3" />
@@ -28,20 +35,27 @@
   <xacro:property name="rear_caster_wheel" value="false" />
 
   <xacro:property name="wheel_mesh_file" value="" />
-  <!-- CAD 실측: RPLIDAR [87] 상단(스캔면) STEP Z=417mm.
-       yaw=pi: 라이다 데이터가 점대칭 상태이므로 frame yaw=pi로 보정 (2026-05-22 실측). -->
+  <!-- rescuepang_v3.1 CAD 실측: RPLIDAR 원통(직경 76mm) 중심 X=55mm, Y=0, 상단(스캔면) Z=701.3mm.
+       100x100 마운트 플레이트(Z 660) 위에 안착, 로봇 최상단. 구 CAD 대비 X -75mm / Z +281mm.
+       yaw=pi: 라이다 데이터가 점대칭 상태이므로 frame yaw=pi로 보정 (2026-05-22 실물 실측값 유지 — v3 조립 후 재확인 필요). -->
   <xacro:property name="laser_pose">
-    <origin xyz="0.13 0.0 0.420" rpy="0 0 ${pi}"/>
+    <origin xyz="0.055 0.0 0.701" rpy="0 0 ${pi}"/>
   </xacro:property>
 
-  <!-- CAD 실측: camera_module [40] STEP(51,-8,358)mm -->
+  <!-- rescuepang_v3.1 CAD 실측: RealSense L515 원반(직경 59.4mm·두께 26.0mm = L515 규격 61x26 일치).
+       렌즈면 X=561.8mm, 중심 Y=-3.5mm, Z=597.3mm. 틸트 없음(모든 Z단면 두께 26.0 균일) → 정면 수평.
+       지면 기준 높이 0.757m. 구 CAD 대비 X +269mm / Z +236mm. -->
   <xacro:property name="depth_sensor_pose">
-    <origin xyz="0.293 0.0 0.361" rpy="0 0 0"/>
+    <origin xyz="0.562 -0.0035 0.597" rpy="0 0 0"/>
   </xacro:property>
 
-  <!-- 시뮬용 RGB 카메라: depth_sensor와 동일 위치 (L515 마운트) -->
+  <!-- 카메라 리니어 액추에이터 스트로크 150mm (실물 사양, 2026-08-01 확인).
+       위 depth_sensor_pose = 수납 위치(주행 중). 전개 시 X = 0.562 + 0.150 = 0.712 -->
+  <xacro:property name="camera_boom_stroke" value="0.15" />
+
+  <!-- 시뮬용 RGB 카메라: depth_sensor와 동일 위치 (L515 마운트). 리니어 액추에이터에는 미연동(수납 위치 고정) -->
   <xacro:property name="rear_camera_sensor_pose">
-    <origin xyz="0.293 0.0 0.361" rpy="0 0 0"/>
+    <origin xyz="0.562 -0.0035 0.597" rpy="0 0 0"/>
   </xacro:property>
 
 </robot>

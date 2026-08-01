@@ -5,7 +5,7 @@
 
     <link name="base_link">
       <visual>
-        <origin xyz="0.285 -0.050 0.003" rpy="0 0 1.5708"/>
+        <origin xyz="${base_mesh_xyz}" rpy="${base_mesh_rpy}"/>
         <geometry>
           <mesh filename="${base_mesh_file}" scale="0.001 0.001 0.001"/>
         </geometry>

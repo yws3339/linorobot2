@@ -1,5 +1,8 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="depth_sensor" params="*origin">
+  <!-- stroke: 리니어 액추에이터 스트로크(m). 0이면 고정 조인트(기존 동작 유지).
+       >0이면 camera_to_base_link가 prismatic이 되어 카메라를 +X로 전개할 수 있음.
+       origin은 항상 '수납(전개량 0)' 위치를 가리킨다. -->
+  <xacro:macro name="depth_sensor" params="*origin stroke:=0">
     <!-- Intel RealSense L515 -->
     <link name="camera_link">
       <visual>
@@ -24,11 +27,24 @@
       </inertial>
     </link>
 
-    <joint name="camera_to_base_link" type="fixed">
-      <parent link="base_link"/>
-      <child link="camera_link"/>
-      <xacro:insert_block name="origin"/>
-    </joint>
+    <xacro:if value="${stroke == 0}">
+      <joint name="camera_to_base_link" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+        <xacro:insert_block name="origin"/>
+      </joint>
+    </xacro:if>
+    <xacro:unless value="${stroke == 0}">
+      <!-- 리니어 액추에이터: 0=수납(주행), stroke=최대 전개 -->
+      <joint name="camera_to_base_link" type="prismatic">
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+        <xacro:insert_block name="origin"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="0" upper="${stroke}" effort="50" velocity="0.05"/>
+        <dynamics damping="20.0" friction="5.0"/>
+      </joint>
+    </xacro:unless>
 
     <link name="camera_depth_link"/>
     <joint name="camera_depth_joint" type="fixed">
@@ -64,5 +80,24 @@
         </plugin>
       </sensor>
     </gazebo>
+
+    <!-- 리니어 액추에이터 구동/상태 (ros2_control 없이 Gazebo 플러그인으로 처리).
+         전개: /set_joint_trajectory (trajectory_msgs/JointTrajectory) 발행
+               joint_names=['camera_to_base_link'], positions=[0~stroke]
+               ⚠️ header.frame_id 는 반드시 'base_footprint' (Gazebo에서 고정조인트가
+                  base_footprint로 병합되어 base_link 링크는 존재하지 않음)
+         상태: /joint_states 의 camera_to_base_link 가 현재 전개량(m)
+         검증(2026-08-01): 전개 0.15 명령 → 0.1474, 수납 0 명령 → 0.0004 -->
+    <xacro:unless value="${stroke == 0}">
+      <gazebo>
+        <plugin name="camera_boom_traj" filename="libgazebo_ros_joint_pose_trajectory.so">
+          <update_rate>50</update_rate>
+        </plugin>
+        <plugin name="camera_boom_state" filename="libgazebo_ros_joint_state_publisher.so">
+          <update_rate>20</update_rate>
+          <joint_name>camera_to_base_link</joint_name>
+        </plugin>
+      </gazebo>
+    </xacro:unless>
   </xacro:macro>
 </robot>
