@@ -144,7 +144,4 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(joy_launch_path),
             condition=IfCondition(LaunchConfiguration("joy")),
         ),
-
-        # 경광봉(beacon_node)은 별도 실행:
-        # ros2 launch vesc_bridge beacon.launch.py
     ])
