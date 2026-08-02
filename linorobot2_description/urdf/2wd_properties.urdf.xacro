@@ -53,6 +53,9 @@
        위 depth_sensor_pose = 수납 위치(주행 중). 전개 시 X = 0.562 + 0.150 = 0.712 -->
   <xacro:property name="camera_boom_stroke" value="0.15" />
 
+  <!-- 카메라 틸트 서보 최대각 90° (실물 사양). 0=정면 주행, 1.5708=바닥 주시 -->
+  <xacro:property name="camera_tilt_max" value="1.5708" />
+
   <!-- 시뮬용 RGB 카메라: depth_sensor와 동일 위치 (L515 마운트). 리니어 액추에이터에는 미연동(수납 위치 고정) -->
   <xacro:property name="rear_camera_sensor_pose">
     <origin xyz="0.562 -0.0035 0.597" rpy="0 0 0"/>

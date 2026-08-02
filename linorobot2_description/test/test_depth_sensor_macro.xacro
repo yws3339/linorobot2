@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- depth_sensor 매크로 기본값 회귀 검증용. stroke/tilt 미전달 시
+     camera_to_base_link=fixed, camera_tilt_joint 미생성이어야 한다. -->
+<robot name="test_depth_sensor" xmlns:xacro="http://ros.org/wiki/xacro">
+  <link name="base_link"/>
+  <xacro:include filename="$(find linorobot2_description)/urdf/sensors/depth_sensor.urdf.xacro" />
+  <xacro:depth_sensor>
+    <origin xyz="0.5 0 0.6" rpy="0 0 0"/>
+  </xacro:depth_sensor>
+</robot>

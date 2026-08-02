@@ -77,7 +77,7 @@
   
   <!-- 카메라 리니어 액추에이터 스트로크 150mm (실물 사양).
        depth_sensor_pose는 수납 위치이며, 전개 시 +X로 최대 0.15m 이동 -->
-  <xacro:depth_sensor stroke="${camera_boom_stroke}">
+  <xacro:depth_sensor stroke="${camera_boom_stroke}" tilt="${camera_tilt_max}">
     <xacro:insert_block name="depth_sensor_pose" />
   </xacro:depth_sensor>
 

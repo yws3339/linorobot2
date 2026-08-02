@@ -1,8 +1,10 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- stroke: 리니어 액추에이터 스트로크(m). 0이면 고정 조인트(기존 동작 유지).
        >0이면 camera_to_base_link가 prismatic이 되어 카메라를 +X로 전개할 수 있음.
-       origin은 항상 '수납(전개량 0)' 위치를 가리킨다. -->
-  <xacro:macro name="depth_sensor" params="*origin stroke:=0">
+       origin은 항상 '수납(전개량 0)' 위치를 가리킨다.
+       tilt: 틸트 관절 최대각(rad). 0이면 관절 없이 카메라가 붐에 직결(기존 동작).
+             >0이면 camera_tilt_joint(+Y 회전)가 생겨 0=정면, tilt=바닥. -->
+  <xacro:macro name="depth_sensor" params="*origin stroke:=0 tilt:=0">
     <!-- Intel RealSense L515 -->
     <link name="camera_link">
       <visual>
@@ -30,7 +32,7 @@
     <xacro:if value="${stroke == 0}">
       <joint name="camera_to_base_link" type="fixed">
         <parent link="base_link"/>
-        <child link="camera_link"/>
+        <child link="camera_mount_link"/>
         <xacro:insert_block name="origin"/>
       </joint>
     </xacro:if>
@@ -38,11 +40,41 @@
       <!-- 리니어 액추에이터: 0=수납(주행), stroke=최대 전개 -->
       <joint name="camera_to_base_link" type="prismatic">
         <parent link="base_link"/>
-        <child link="camera_link"/>
+        <child link="camera_mount_link"/>
         <xacro:insert_block name="origin"/>
         <axis xyz="1 0 0"/>
         <limit lower="0" upper="${stroke}" effort="50" velocity="0.05"/>
         <dynamics damping="20.0" friction="5.0"/>
+      </joint>
+    </xacro:unless>
+
+    <!-- 붐 끝(리니어 액추에이터의 이동단). 틸트 서보가 여기 붙는다. -->
+    <link name="camera_mount_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia ixx="0.000001" ixy="0.0" ixz="0.0"
+                 iyy="0.000001" iyz="0.0"
+                 izz="0.000001"/>
+      </inertial>
+    </link>
+
+    <xacro:if value="${tilt == 0}">
+      <joint name="camera_tilt_joint" type="fixed">
+        <parent link="camera_mount_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </joint>
+    </xacro:if>
+    <xacro:unless value="${tilt == 0}">
+      <!-- 틸트 서보: 0=정면(+X), tilt=바닥(-Z). +Y 회전이 +X를 -Z로 보낸다. -->
+      <joint name="camera_tilt_joint" type="revolute">
+        <parent link="camera_mount_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="${tilt}" effort="20" velocity="1.0"/>
+        <dynamics damping="2.0" friction="0.5"/>
       </joint>
     </xacro:unless>
 
@@ -96,6 +128,7 @@
         <plugin name="camera_boom_state" filename="libgazebo_ros_joint_state_publisher.so">
           <update_rate>20</update_rate>
           <joint_name>camera_to_base_link</joint_name>
+          <joint_name>camera_tilt_joint</joint_name>
         </plugin>
       </gazebo>
     </xacro:unless>
