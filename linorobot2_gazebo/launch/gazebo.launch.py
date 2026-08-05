@@ -15,9 +15,9 @@
 import os
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
-                            IncludeLaunchDescription, RegisterEventHandler)
+                            IncludeLaunchDescription, LogInfo, RegisterEventHandler)
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -73,6 +73,22 @@ def generate_launch_description():
     load_jsb = spawner('joint_state_broadcaster')
     load_arm = spawner('arm_velocity_controller')
     load_crank = spawner('crank_velocity_controller')
+
+    def on_spawn_entity_exit(event, context):
+        if event.returncode == 0:
+            return [load_jsb]
+        return [LogInfo(msg=(
+            f"[gazebo.launch.py] spawn_entity exited with code {event.returncode}, "
+            "skipping controller spawners"
+        ))]
+
+    def on_load_jsb_exit(event, context):
+        if event.returncode == 0:
+            return [load_arm, load_crank]
+        return [LogInfo(msg=(
+            f"[gazebo.launch.py] joint_state_broadcaster spawner exited with code "
+            f"{event.returncode}, skipping arm/crank controller spawners"
+        ))]
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -153,10 +169,10 @@ def generate_launch_description():
 
         # gazebo_ros2_control이 로드된 뒤 컨트롤러를 올린다.
         RegisterEventHandler(
-            OnProcessExit(target_action=spawn_entity, on_exit=[load_jsb])
+            OnProcessExit(target_action=spawn_entity, on_exit=on_spawn_entity_exit)
         ),
         RegisterEventHandler(
-            OnProcessExit(target_action=load_jsb, on_exit=[load_arm, load_crank])
+            OnProcessExit(target_action=load_jsb, on_exit=on_load_jsb_exit)
         ),
     ])
 
