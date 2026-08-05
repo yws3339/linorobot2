@@ -13,13 +13,67 @@
 # limitations under the License.
 
 import os
+import re
+import subprocess
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, EnvironmentVariable
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.parameter_descriptions import ParameterValue
+
+
+def sanitized_urdf(path):
+    """xacro 결과에서 XML 선언과 주석을 제거하고 한 줄로 만든다.
+
+    gazebo_ros2_control은 robot_description을 controller_manager에
+    `--param robot_description:=<xml>` 로 재전달하고 rcl이 이를 YAML로 파싱한다.
+    XML 선언·주석(특히 비ASCII)이 있으면 파싱이 깨져 controller_manager가 뜨지 않는다.
+    """
+    urdf = subprocess.check_output(['xacro', path]).decode()
+    urdf = re.sub(r'<\?xml[^>]*\?>', '', urdf)
+    urdf = re.sub(r'<!--.*?-->', '', urdf, flags=re.DOTALL)
+    return ' '.join(urdf.split())
+
+
+def launch_setup(context, *args, **kwargs):
+    urdf_path = LaunchConfiguration('urdf').perform(context)
+    use_sim_time = LaunchConfiguration('use_sim_time')
+
+    rviz_config_path = PathJoinSubstitution(
+        [FindPackageShare('linorobot2_description'), 'rviz', 'description.rviz']
+    )
+
+    return [
+        Node(
+            package='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher',
+            condition=IfCondition(LaunchConfiguration('publish_joints')),
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{
+                'use_sim_time': use_sim_time,
+                'robot_description': sanitized_urdf(urdf_path),
+            }]
+        ),
+
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            arguments=['-d', rviz_config_path],
+            condition=IfCondition(LaunchConfiguration('rviz')),
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+    ]
 
 
 def generate_launch_description():
@@ -34,70 +88,12 @@ def generate_launch_description():
         [FindPackageShare("linorobot2_description"), "urdf/robots", f"{robot_base}.urdf.xacro"]
     )
 
-    rviz_config_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_description'), 'rviz', 'description.rviz']
-    )
-
     return LaunchDescription([
-        DeclareLaunchArgument(
-            name='urdf', 
-            default_value=urdf_path,
-            description='URDF path'
-        ),
-        
-        DeclareLaunchArgument(
-            name='publish_joints', 
-            default_value='true',
-            description='Launch joint_states_publisher'
-        ),
-
-        DeclareLaunchArgument(
-            name='rviz', 
-            default_value='false',
-            description='Run rviz'
-        ),
-
-        DeclareLaunchArgument(
-            name='use_sim_time', 
-            default_value='false',
-            description='Use simulation time'
-        ),
-
-        Node(
-            package='joint_state_publisher',
-            executable='joint_state_publisher',
-            name='joint_state_publisher',
-            condition=IfCondition(LaunchConfiguration("publish_joints")),
-            parameters=[
-                {'use_sim_time': LaunchConfiguration('use_sim_time')}
-            ]
-        ),
-
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[
-                {
-                    'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'robot_description': ParameterValue(Command(['xacro ', LaunchConfiguration('urdf')]), value_type=str)
-                }
-            ]
-        ),
-
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            output='screen',
-            arguments=['-d', rviz_config_path],
-            condition=IfCondition(LaunchConfiguration("rviz")),
-            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}]
-        )
+        DeclareLaunchArgument(name='urdf', default_value=urdf_path, description='URDF path'),
+        DeclareLaunchArgument(name='publish_joints', default_value='true',
+                              description='Launch joint_states_publisher'),
+        DeclareLaunchArgument(name='rviz', default_value='false', description='Run rviz'),
+        DeclareLaunchArgument(name='use_sim_time', default_value='false',
+                              description='Use simulation time'),
+        OpaqueFunction(function=launch_setup),
     ])
-
-#sources: 
-#https://navigation.ros.org/setup_guides/index.html#
-#https://answers.ros.org/question/374976/ros2-launch-gazebolaunchpy-from-my-own-launch-file/
-#https://github.com/ros2/rclcpp/issues/940
