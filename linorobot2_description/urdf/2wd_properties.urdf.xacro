@@ -61,4 +61,11 @@
     <origin xyz="0.562 -0.0035 0.597" rpy="0 0 0"/>
   </xacro:property>
 
+  <!-- SCARA(CPR 모듈) 마운트 — rescuepang_v3.1.stl 정점 실측 기준.
+       STL의 J1 축 (0.410, -0.099), 팔 회전면 Z 0.281.
+       URDF는 J1이 베이스 +0.33에 있으므로 z = 0.281 - 0.33 = -0.050.
+       STL에서 팔이 +X로 뻗어 있고 URDF 영점 자세도 로컬 +X라 yaw는 0. -->
+  <xacro:property name="scara_mount_xyz" value="0.410 -0.099 -0.050" />
+  <xacro:property name="scara_mount_rpy" value="0 0 0" />
+
 </robot>

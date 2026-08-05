@@ -10,6 +10,7 @@
   <xacro:include filename="$(find linorobot2_description)/urdf/sensors/generic_laser.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/sensors/depth_sensor.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/sensors/camera.urdf.xacro" />
+  <xacro:include filename="$(find scara_description)/urdf/scara_macro.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/controllers/diff_drive.urdf.xacro" />
 
   <xacro:base
@@ -87,6 +88,11 @@
       topic_name="rear_rgb_camera/image">
     <xacro:insert_block name="rear_camera_sensor_pose" />
   </xacro:rgb_camera>
+
+  <!-- SCARA(CPR 모듈). 팔 회전면이 차체와 같은 높이이므로 타깃은 차체 앞(로버 X>0.65)에만 둔다. -->
+  <xacro:scara parent="base_link">
+    <origin xyz="${scara_mount_xyz}" rpy="${scara_mount_rpy}"/>
+  </xacro:scara>
 
   <xacro:diff_drive_controller
     wheel_separation="${wheel_pos_y * 2}"
