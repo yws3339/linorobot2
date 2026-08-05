@@ -14,7 +14,9 @@
 
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
+                            IncludeLaunchDescription, RegisterEventHandler)
+from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -44,6 +46,33 @@ def generate_launch_description():
     description_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_description'), 'launch', 'description.launch.py']
     )
+
+    spawn_entity = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        name='urdf_spawner',
+        output='screen',
+        arguments=[
+            '-topic', 'robot_description',
+            '-entity', 'linorobot2',
+            '-x', LaunchConfiguration('spawn_x'),
+            '-y', LaunchConfiguration('spawn_y'),
+            '-z', LaunchConfiguration('spawn_z'),
+            '-Y', LaunchConfiguration('spawn_yaw'),
+        ]
+    )
+
+    def spawner(name):
+        return Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=[name],
+            output='screen',
+        )
+
+    load_jsb = spawner('joint_state_broadcaster')
+    load_arm = spawner('arm_velocity_controller')
+    load_crank = spawner('crank_velocity_controller')
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -93,20 +122,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        Node(
-            package='gazebo_ros',
-            executable='spawn_entity.py',
-            name='urdf_spawner',
-            output='screen',
-            arguments=[
-                '-topic', 'robot_description', 
-                '-entity', 'linorobot2', 
-                '-x', LaunchConfiguration('spawn_x'),
-                '-y', LaunchConfiguration('spawn_y'),
-                '-z', LaunchConfiguration('spawn_z'),
-                '-Y', LaunchConfiguration('spawn_yaw'),
-            ]
-        ),
+        spawn_entity,
 
         Node(
             package='linorobot2_gazebo',
@@ -133,7 +149,15 @@ def generate_launch_description():
                 'publish_joints': 'false',
                 'urdf': LaunchConfiguration('urdf')
             }.items()
-        )
+        ),
+
+        # gazebo_ros2_control이 로드된 뒤 컨트롤러를 올린다.
+        RegisterEventHandler(
+            OnProcessExit(target_action=spawn_entity, on_exit=[load_jsb])
+        ),
+        RegisterEventHandler(
+            OnProcessExit(target_action=load_jsb, on_exit=[load_arm, load_crank])
+        ),
     ])
 
 #sources: 
