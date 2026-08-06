@@ -15,7 +15,11 @@
   <!-- rescuepang_v3.1.stl: 메시 +X=전방이라 회전 불필요. base_link가 메시 (-510,190,0)에 오도록 오프셋.
        (메시 실측: 인휠 직경 139mm→중심 X=-510, 좌우바퀴 Y=5/375→중심선 190, 메시 Z=0이 base_link 높이)
        v3→v3.1은 뎁스카메라(L515)만 추가, 바퀴·라이다 기준점 및 외곽 치수 완전 동일 → 아래 값 그대로 유효 -->
-  <xacro:property name="base_mesh_file" value="package://linorobot2_description/meshes/rescuepang_v3.1.stl" />
+  <!-- SCARA 형상을 제거한 메시를 쓴다. 원본(rescuepang_v3.1.stl)에는 팔이 형상으로
+       들어 있는데 그건 base_link에 붙은 통짜 메시라 움직이지 않는다. 움직이는 URDF
+       관절(scara_base_link~crank_link)과 겹쳐 보여 화면에 팔이 둘로 보였다.
+       원본은 CAD 실측 참조용으로 같은 폴더에 보존. -->
+  <xacro:property name="base_mesh_file" value="package://linorobot2_description/meshes/rescuepang_v3.1_no_scara.stl" />
   <xacro:property name="base_mesh_xyz" value="0.510 -0.190 0.000" />
   <xacro:property name="base_mesh_rpy" value="0 0 0" />
 
