@@ -11,7 +11,14 @@
         <right_joint>right_wheel_joint</right_joint>
         <wheel_separation>${wheel_separation}</wheel_separation>
         <wheel_diameter>${wheel_radius * 2}</wheel_diameter>
-        <max_wheel_acceleration>1.0</max_wheel_acceleration>
+        <!-- 이 값은 바퀴 각가속(rad/s²) 기준이라 로봇 선가속으로 환산하면
+             1.0 x wheel_radius = 0.0695 m/s² 밖에 안 된다. 0.8 m/s 도달에 11.5초가
+             걸려 주행 내내 가속 구간에 머물렀다. velocity_smoother의 max_accel
+             1.0 m/s²를 실제로 내려면 바퀴 기준 1.0/0.0695 = 14.4 rad/s²가 필요하다. -->
+        <max_wheel_acceleration>15.0</max_wheel_acceleration>
+        <!-- 매크로가 wheel_torque를 받으면서 플러그인에 넘기지 않아
+             gazebo_ros_diff_drive 기본값 5.0 N·m으로 돌고 있었다. -->
+        <max_wheel_torque>${wheel_torque}</max_wheel_torque>
         <robot_base_frame>base_footprint</robot_base_frame>
         <publish_odom>true</publish_odom>
         <publish_odom_tf>false</publish_odom_tf>

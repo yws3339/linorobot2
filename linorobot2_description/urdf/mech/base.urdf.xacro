@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="base" params="length width height mass wheel_radius wheel_pos_z origin_x origin_y origin_z">
+  <xacro:macro name="base" params="length width height mass wheel_radius wheel_pos_z origin_x origin_y origin_z com_offset_x:=0">
     <link name="base_footprint"/>
 
     <link name="base_link">
@@ -31,8 +31,12 @@
         </geometry>
       </collision>
 
+      <!-- 무게중심은 충돌박스 기하중심과 다르다. 충돌박스는 CAD 외곽이지만 실제 질량은
+           인휠모터(바퀴축)와 배터리·ODrive가 있는 뒤쪽에 몰려 있다. 둘을 같은 origin으로
+           묶으면 무게중심이 앞으로 끌려가 구동바퀴 하중이 빠지고 회전·가속이 죽는다.
+           com_offset_x 기본 0이라 다른 로봇 설정은 기존 동작 그대로다. -->
       <inertial>
-        <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
+        <origin xyz="${origin_x + com_offset_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
         <mass value="${mass}"/>
         <inertia ixx="${(1/12) * mass * ((width  * width)  + (height * height))}" ixy="0.0" ixz="0.0"
                  iyy="${(1/12) * mass * ((length * length) + (height * height))}" iyz="0.0"

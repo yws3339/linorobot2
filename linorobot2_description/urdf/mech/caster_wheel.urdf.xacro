@@ -39,7 +39,13 @@
     <joint name="${side}_caster_wheel_joint" type="fixed">
       <parent link="base_link"/>
       <child link="${side}_caster_wheel_link"/>
-      <origin xyz="${caster_wheel_x} 0 -0.100" rpy="0 0 0"/>
+      <!-- 캐스터 최하점을 구동바퀴 최하점에 맞춘다.
+           z를 -0.100으로 하드코딩하던 값은 인휠모터 실측(wheel_radius 0.045→0.0695,
+           wheel_pos_z -0.03→-0.09) 반영 시 함께 갱신되지 않아, 캐스터가 바퀴보다
+           0.5mm 아래로 내려가 있었다. 그 결과 로봇이 캐스터에 얹혀 구동바퀴 접지가
+           빠지면서 회전과 가속이 제대로 안 됐다.
+           매크로가 wheel_radius/wheel_pos_z를 이미 받고 있으므로 그걸로 계산한다. -->
+      <origin xyz="${caster_wheel_x} 0 ${wheel_pos_z - wheel_radius + caster_wheel_radius}" rpy="0 0 0"/>
     </joint>
   </xacro:macro>
 </robot>
