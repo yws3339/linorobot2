@@ -176,7 +176,11 @@ controller_server:
       # ※ 실물은 고무 타이어 종/횡 마찰이 다르고 ODrive가 토크를 직접 내므로 해당 없음.
       use_rotate_to_heading: true
       allow_reversing: false
-      rotate_to_heading_min_theta: 0.1
+      # humble RPP의 실제 파라미터명은 rotate_to_heading_min_angle이다.
+      # rotate_to_heading_min_theta로 적혀 있어 조용히 무시되고 기본값 0.785가
+      # 적용돼 왔다. 이름을 바로잡되 값은 그동안 실제로 동작하던 0.785를 유지한다
+      # (원래 의도했던 0.1은 5.7°만 틀어져도 제자리 회전을 걸어 과하다).
+      rotate_to_heading_min_angle: 0.785
       # 1Hz plan 갱신 시 RPP가 prev_angular_vel reset하는 동작 회피
       # 한 cycle(20ms) 내 0.75 rad/s 도달 가능하도록 50 적용 (실측 검증)
       max_angular_accel: 50.0

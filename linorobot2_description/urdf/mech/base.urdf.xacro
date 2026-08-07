@@ -14,16 +14,6 @@
         </material>
       </visual>
 
-    <gazebo reference="base_link">
-      <visual>
-        <material>
-          <ambient>0.3 0.3 0.3 1.0</ambient>
-          <diffuse>0.5 0.5 0.5 1.0</diffuse>
-          <specular>0.2 0.2 0.2 1.0</specular>
-        </material>
-      </visual>
-    </gazebo>
-
       <collision>
         <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy="0 0 0"/>
         <geometry>
@@ -44,6 +34,17 @@
       </inertial>
     </link>
 
+    <!-- <gazebo>는 <link> 바깥에 와야 한다. 안에 두면 URDF 파서가 무시해
+         Gazebo 머티리얼이 적용되지 않는다 (업스트림도 바깥). -->
+    <gazebo reference="base_link">
+      <visual>
+        <material>
+          <ambient>0.3 0.3 0.3 1.0</ambient>
+          <diffuse>0.5 0.5 0.5 1.0</diffuse>
+          <specular>0.2 0.2 0.2 1.0</specular>
+        </material>
+      </visual>
+    </gazebo>
 
     <joint name="base_to_footprint" type="fixed">
       <parent link="base_footprint"/>
