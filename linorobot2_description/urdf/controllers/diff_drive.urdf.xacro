@@ -6,7 +6,18 @@
           <remapping>odom:=odom/unfiltered</remapping>
           <remapping>cmd_vel:=cmd_vel_safe</remapping>
         </ros>
-        <updateRate>100</updateRate>
+        <!-- 물리 스텝(max_step_size 0.001 = 1000Hz)마다 샘플링해야 한다. 낮추면
+             보고 twist가 편향된다(2026-08-08 규명).
+             원래 <updateRate>100</updateRate>이었는데 그건 Gazebo Classic ROS1 표기라
+             ROS2 gazebo_ros_diff_drive가 읽지 않아 기본값 100Hz로 돌고 있었다.
+             WORLD 모드의 twist는 모델의 순간 속도인데, 차체는 정지 중에도 고주파로
+             떨린다. 그걸 10스텝마다 뜨면 위상이 고정돼 평균에 가짜 DC가 남는다.
+             ekf.yaml이 odom0의 vx를 융합하므로 EKF가 그 DC를 적분해 odom 프레임이
+             통째로 흘렀다(RViz가 비고 planner가 "Invalid frame ID map"을 뱉는 증상).
+               100Hz  : 실제 -0.706 vs 보고 -2.987 mm/s (편향 -2.281, 세션마다 값이 달라짐)
+               1000Hz : 실제 -0.706 vs 보고 -0.708 mm/s (편향 -0.002, 주행 전후 동일)
+             대가는 발행량 10배(EKF CPU 약 23%)지만 RTF 1.06으로 여유가 있다. -->
+        <update_rate>1000</update_rate>
         <left_joint>left_wheel_joint</left_joint>
         <right_joint>right_wheel_joint</right_joint>
         <wheel_separation>${wheel_separation}</wheel_separation>
@@ -19,6 +30,11 @@
         <!-- 매크로가 wheel_torque를 받으면서 플러그인에 넘기지 않아
              gazebo_ros_diff_drive 기본값 5.0 N·m으로 돌고 있었다. -->
         <max_wheel_torque>${wheel_torque}</max_wheel_torque>
+        <!-- odometry_source는 기본값 WORLD(1)로 둔다. 정지 중 보고 twist가 자기
+             위치 변화율과 어긋나 EKF가 odom 프레임을 초당 3mm 흘리지만
+             (2026-08-08 실측: 위치 -0.71 vs 속도 -2.98 mm/s, 5990표본),
+             ENCODER(0)는 더 나쁘다 — 그쪽은 v=sqrt(dx²+dy²)로 크기만 구해 부호를
+             잃는다(후진 중에도 1995표본 전부 양수). Nav2 BackUp 복구가 깨진다. -->
         <robot_base_frame>base_footprint</robot_base_frame>
         <publish_odom>true</publish_odom>
         <publish_odom_tf>false</publish_odom_tf>
