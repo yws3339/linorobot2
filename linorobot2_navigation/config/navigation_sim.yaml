@@ -148,7 +148,8 @@ controller_server:
     # RotationShim 우회: RPP 직접 사용 (use_rotate_to_heading: true로 큰 회전 자체 처리)
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 1.5
+      # 회전반경 0.694m 차체에 1.5m/s는 코너 진입이 너무 빨랐다 (제동거리만 0.56m).
+      desired_linear_vel: 0.8
       lookahead_dist: 0.5
       min_lookahead_dist: 0.5
       max_lookahead_dist: 1.8
@@ -163,8 +164,16 @@ controller_server:
       use_fixed_curvature_lookahead: false
       curvature_lookahead_dist: 0.6
       use_cost_regulated_linear_velocity_scaling: true
-      regulated_linear_scaling_min_radius: 0.9
+      # 실제 회전반경 0.694m보다 넉넉히 위에서 감속을 시작하도록 0.9 → 1.2
+      regulated_linear_scaling_min_radius: 1.2
       regulated_linear_scaling_min_speed: 0.25
+      # 참고(2026-08-07 실측): Gazebo에서 제자리 회전은 0.17 rad/s에서 포화한다.
+      # 명령을 0.7→1.4→2.0으로 키워도 실제 각속도는 0.168→0.165→0.150으로 늘지 않는다.
+      # 2WD+캐스터에 등방성 마찰이라 제자리 회전 시 구동력과 횡저항이 같은 마찰 예산을
+      # 나눠 써 상쇄되기 때문이다(계산상 각각 14.9 N·m). 직진은 명령의 100%가 나온다.
+      # false로 두면 곡선 주행으로 바뀌어 대각선 이동은 5초에 완주하지만, 뒤쪽 목표처럼
+      # U턴이 필요하면 allow_reversing: false와 겹쳐 제자리를 맴돈다.
+      # ※ 실물은 고무 타이어 종/횡 마찰이 다르고 ODrive가 토크를 직접 내므로 해당 없음.
       use_rotate_to_heading: true
       allow_reversing: false
       rotate_to_heading_min_theta: 0.1
@@ -188,8 +197,12 @@ local_costmap:
       width: 6
       height: 6
       resolution: 0.05
-      # base_link=회전중심 기준: 뒷면 -0.075, 앞면 +0.395 (STL 470mm), 좌우 ±0.17m (트랙 294mm + 마진)
-      footprint: "[[0.395, 0.17], [0.395, -0.17], [-0.075, -0.17], [-0.075, 0.17]]"
+      # base_link=회전중심 기준. rescuepang_v3.1 CAD 실측 섀시 X[-0.070, 0.650] Y[±0.2435].
+      # (전방 돌출부 X 0.650~0.831은 주행 중 수납이라 제외)
+      # 이전 값 [[0.395,0.17],...]은 구 차체 기준이라 앞쪽이 24.5cm 작았다. base_link가
+      # 회전중심이라 제자리 회전 반경이 0.443m로 계산돼 실제 0.694m와 25cm 어긋났고,
+      # 코너에서 앞모서리가 벽에 박혔다.
+      footprint: "[[0.650, 0.2435], [0.650, -0.2435], [-0.070, -0.2435], [-0.070, 0.2435]]"
       plugins: ["stvl_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -235,8 +248,12 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
-      # base_link=회전중심 기준: 뒷면 -0.075, 앞면 +0.395 (STL 470mm), 좌우 ±0.17m (트랙 294mm + 마진)
-      footprint: "[[0.395, 0.17], [0.395, -0.17], [-0.075, -0.17], [-0.075, 0.17]]"
+      # base_link=회전중심 기준. rescuepang_v3.1 CAD 실측 섀시 X[-0.070, 0.650] Y[±0.2435].
+      # (전방 돌출부 X 0.650~0.831은 주행 중 수납이라 제외)
+      # 이전 값 [[0.395,0.17],...]은 구 차체 기준이라 앞쪽이 24.5cm 작았다. base_link가
+      # 회전중심이라 제자리 회전 반경이 0.443m로 계산돼 실제 0.694m와 25cm 어긋났고,
+      # 코너에서 앞모서리가 벽에 박혔다.
+      footprint: "[[0.650, 0.2435], [0.650, -0.2435], [-0.070, -0.2435], [-0.070, 0.2435]]"
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "stvl_layer", "inflation_layer"]
@@ -359,7 +376,7 @@ velocity_smoother:
     smoothing_frequency: 50.0
     scale_velocities: False
     feedback: "OPEN_LOOP"  # 시뮬에서는 OPEN_LOOP 권장 (실물 대리석 슬립 대응 시 CLOSED_LOOP로 변경)
-    max_velocity: [1.5, 0.0, 1.5]
+    max_velocity: [0.8, 0.0, 1.5]   # linear은 desired_linear_vel과 일치시킨다
     min_velocity: [-0.5, 0.0, -1.5]
     max_accel: [1.0, 0.0, 25.0]           # angular 가속 5.0 → 25.0 (1 cycle 안 max 도달)
     max_decel: [-2.0, 0.0, -25.0]
