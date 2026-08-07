@@ -7,10 +7,13 @@
   <xacro:macro name="depth_sensor" params="*origin stroke:=0 tilt:=0">
     <!-- Intel RealSense L515 -->
     <link name="camera_link">
+      <!-- 충돌과 같은 원통. 원래 realsense2_description의 l515.dae를 참조했는데
+           그 패키지가 설치돼 있지 않아 아무것도 안 그려졌고, 그래서 붐 전개와
+           틸트가 화면에서 보이지 않았다(2026-08-08). 기본 도형이라 외부 의존이 없다. -->
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
         <geometry>
-          <mesh filename="file:///opt/ros/humble/share/realsense2_description/meshes/l515.dae"/>
+          <cylinder radius="0.0305" length="0.026"/>
         </geometry>
       </visual>
       <collision>
@@ -87,6 +90,9 @@
 
     <!-- Gazebo Classic 11 depth camera — L515 스펙 -->
     <gazebo reference="camera_link">
+      <!-- 섀시 STL에도 L515 원반이 형상으로 들어 있어(v3→v3.1 추가분) 수납 시
+           겹친다. 색을 달리해야 어느 쪽이 움직이는 카메라인지 구분된다. -->
+      <material>Gazebo/Blue</material>
       <sensor name="camera" type="depth">
         <always_on>true</always_on>
         <update_rate>10.0</update_rate>
