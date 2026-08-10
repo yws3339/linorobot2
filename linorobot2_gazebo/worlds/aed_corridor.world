@@ -213,14 +213,15 @@
 
     <gravity>0 0 -9.81</gravity>
 
-    <!-- 물리 문제를 팔 때는 아래를 켜면 링크별 실제 pose를 구동 플러그인과 무관하게
-         볼 수 있다(/link_states, /model_states — ROS2판은 /gazebo/ 접두사가 없다).
-         단 twist는 이 플러그인의 update_rate로 샘플링한 순간값이라 그대로 믿으면 안 된다.
-         위치 차분으로 구할 것.
+    <!-- `/set_entity_state` 제공 — scripts/sim_rescuer.py 가 도착 시 환자를 옮기는 데 쓴다
+         (시나리오 4단계 재현). 부수적으로 `/link_states`·`/model_states` 로 링크별 실제
+         pose를 구동 플러그인과 무관하게 볼 수 있어 물리 디버깅에도 유용하다
+         (ROS2판은 `/gazebo/` 접두사가 없다).
+         ⚠️ twist는 아래 update_rate로 샘플링한 순간값이라 그대로 믿으면 안 된다 —
+            5장 앨리어싱 항목과 같은 함정이다. 속도는 위치 차분으로 구할 것. -->
     <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
-      <update_rate>100</update_rate>
+      <update_rate>50</update_rate>
     </plugin>
-    -->
 
 
     <gui>
