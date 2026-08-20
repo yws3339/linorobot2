@@ -45,9 +45,10 @@
   <xacro:property name="wheel_width" value="0.0385" />
   <!-- base_link = 회전중심 (양 바퀴 축 중점). 바퀴는 base_link 원점에 위치 -->
   <xacro:property name="wheel_pos_x" value="0.0" />
-  <!-- rescuepang_v3.1 CAD 실측: 트랙폭 370mm / 2 = 185mm (좌우 인휠 중심 Y=5/375).
-       ※ 실물(odrive_params.yaml track_width=0.294)은 구 조립체 실측값이라 v3 조립 후 재측정 필요. -->
-  <xacro:property name="wheel_pos_y" value="0.185" />
+  <!-- 실물 실측 (2026-08-20): 좌우 인휠 중심 사이 325mm / 2 = 162.5mm.
+       CAD 값 370mm 및 구 조립체 실측값 294mm 를 모두 대체한다.
+       odrive_params.yaml 의 track_width 도 같은 값(0.325)이어야 회전 오도메트리가 맞는다. -->
+  <xacro:property name="wheel_pos_y" value="0.1625" />
   <!-- 바퀴 중심: base_link 기준 z=-0.09m (인휠모터 축 높이, 본체 밑판 57.5mm 위에 본체가 있도록) -->
   <xacro:property name="wheel_pos_z" value="-0.09" />
   <xacro:property name="wheel_mass" value="0.3" />
@@ -58,9 +59,11 @@
   <xacro:property name="wheel_mesh_file" value="" />
   <!-- rescuepang_v3.1 CAD 실측: RPLIDAR 원통(직경 76mm) 중심 X=55mm, Y=0, 상단(스캔면) Z=701.3mm.
        100x100 마운트 플레이트(Z 660) 위에 안착, 로봇 최상단. 구 CAD 대비 X -75mm / Z +281mm.
-       yaw=pi: 라이다 데이터가 점대칭 상태이므로 frame yaw=pi로 보정 (2026-05-22 실물 실측값 유지 — v3 조립 후 재확인 필요). -->
+       yaw=pi: 라이다 데이터가 점대칭 상태이므로 frame yaw=pi로 보정 (2026-05-22 실물 실측값 유지).
+       Z 는 실물 실측(2026-08-20): 지면~스캔면 930mm. base_link 는 지면보다 159.5mm 위
+       (wheel_radius 0.0695 + |wheel_pos_z| 0.09) 이므로 0.930 - 0.1595 = 0.7705. -->
   <xacro:property name="laser_pose">
-    <origin xyz="0.055 0.0 0.701" rpy="0 0 ${pi}"/>
+    <origin xyz="0.055 0.0 0.7705" rpy="0 0 ${pi}"/>
   </xacro:property>
 
   <!-- rescuepang_v3.1 CAD 실측: RealSense L515 원반(직경 59.4mm·두께 26.0mm = L515 규격 61x26 일치).

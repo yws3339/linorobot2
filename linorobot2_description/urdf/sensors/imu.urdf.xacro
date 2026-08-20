@@ -5,7 +5,9 @@
     <joint name="imu_to_base_link" type="fixed">
       <parent link="base_link"/>
       <child link="imu_link"/>
-      <origin xyz="-0.0075 0 0.0135" rpy="0 0 0"/>
+      <!-- 실물 실측 (2026-08-20): 바퀴축 중점 기준 뒤로 30mm, 좌우 중앙,
+           지면에서 175mm. base_link 가 지면보다 159.5mm 위이므로 z = 0.175 - 0.1595. -->
+      <origin xyz="-0.03 0 0.0155" rpy="0 0 0"/>
     </joint>
 
     <gazebo reference="imu_link">
