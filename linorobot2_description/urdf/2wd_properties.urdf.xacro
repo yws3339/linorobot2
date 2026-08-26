@@ -67,10 +67,19 @@
   </xacro:property>
 
   <!-- rescuepang_v3.1 CAD 실측: RealSense L515 원반(직경 59.4mm·두께 26.0mm = L515 규격 61x26 일치).
-       렌즈면 X=561.8mm, 중심 Y=-3.5mm, Z=597.3mm. 틸트 없음(모든 Z단면 두께 26.0 균일) → 정면 수평.
-       지면 기준 높이 0.757m. 구 CAD 대비 X +269mm / Z +236mm. -->
+       렌즈면 X=561.8mm, 중심 Y=-3.5mm. 틸트 없음(모든 Z단면 두께 26.0 균일) → 정면 수평.
+
+       Z 는 실물 실측(2026-08-23): 지면~컬러 렌즈 865mm. base_link 는 지면보다 159.5mm 위
+       (wheel_radius 0.0695 + |wheel_pos_z| 0.09) 이므로 0.865 - 0.1595 = 0.7055.
+       CAD(v3.1) 값은 Z=597.3mm(지면 757mm)였는데 실물이 108mm 더 높게 조립됐다.
+       laser_pose 와 같은 방식으로 실측을 우선한다.
+
+       컬러/뎁스 구분: 아래 camera_depth_link 가 camera_link 에 대해 회전만 갖고
+       위치 오프셋이 0 이라, 이 모델에서 둘은 같은 점이다. 실물의 조리개 간격은
+       realsense2_camera 노드가 공장 extrinsic 으로 직접 TF 를 내며 1cm 이내라
+       줄자 오차보다 작다. -->
   <xacro:property name="depth_sensor_pose">
-    <origin xyz="0.562 -0.0035 0.597" rpy="0 0 0"/>
+    <origin xyz="0.562 -0.0035 0.7055" rpy="0 0 0"/>
   </xacro:property>
 
   <!-- 카메라 리니어 액추에이터 스트로크 150mm (실물 사양, 2026-08-01 확인).
