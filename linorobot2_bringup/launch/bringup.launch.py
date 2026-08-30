@@ -119,14 +119,8 @@ def generate_launch_description():
             ),
         ),
 
-        # Optical Flow
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                PathJoinSubstitution(
-                    [FindPackageShare('optical_flow_publisher'), 'launch', 'optical_flow.launch.py']
-                )
-            ),
-        ),
+        # 옵티컬플로우(matek3901)는 뺐다 — 센서가 실물에 없고, 노드가 /dev/ttyTHS1 을
+        # 여는데 그건 카메라붐 ESP32 의 포트다. 켜두면 붐/고정판 제어가 시작부터 막힌다.
 
         # 인지 (카메라 등)
         IncludeLaunchDescription(

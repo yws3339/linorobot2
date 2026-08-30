@@ -28,14 +28,7 @@ ekf_filter_node:
                       false, false, true,
                       false, false, false]
 
-        twist0: /optical_flow/twist
-        twist0_config: [false, false, false,
-                        false, false, false,
-                        true,  true,  false,
-                        false, false, false,
-                        false, false, false]
-        twist0_differential: false
-        twist0_relative: false
-        twist0_queue_size: 5
-        twist0_rejection_threshold: 2.0
-        twist0_nodelay: false
+        # twist0(옵티컬플로우)는 통째로 뺐다 — 센서가 실물에 없고, 그 노드가 무는
+        # /dev/ttyTHS1 은 카메라붐 ESP32 의 포트다. 남은 입력은 odom0 + imu0.
+        # 되살릴 때는 twist0_* 를 부분만 두지 말 것 — robot_localization 은
+        # twist0 토픽 줄이 없으면 나머지 twist0_* 를 아예 안 읽어 조용히 무시한다.
