@@ -135,7 +135,11 @@ controller_server:
       angular_disengage_threshold: 0.3925
       forward_sampling_distance: 0.6
       # 제자리 회전 속도/가속. smoother 상한(1.5 rad/s)을 넘기면 거기서 잘린다.
-      rotate_to_heading_angular_vel: 1.2
+      # ⚠️ RotationShim 은 감속하며 접근하지 않는다. angular_disengage_threshold
+      #    (22.5°)까지 전속으로 돌다가 primary_controller 에 넘긴다. 그래서 이
+      #    값을 올리면 넘기는 순간의 관성이 그대로 커져 목표각을 지나친다.
+      #    이력: 0.5(over-rotation 때문에 낮춤) -> 0.75 -> 1.2(지나침) -> 1.0
+      rotate_to_heading_angular_vel: 1.0
       # 가속 3.2 로는 1.2 rad/s 에 닿는 데 0.38초가 걸려 회전이 굼뜨게 느껴진다.
       # 시뮬에서 선속도 1.5 를 쓰던 시절에는 50.0 이었다(실물엔 과하다).
       max_angular_accel: 10.0
