@@ -132,7 +132,10 @@ controller_server:
     FollowPath:
       plugin: "nav2_rotation_shim_controller::RotationShimController"
       angular_dist_threshold: 0.785
-      angular_disengage_threshold: 0.3925
+      # 목표각 몇 rad 앞에서 primary_controller 에 넘길지. 넘긴 뒤에야 감속이
+      # 시작되므로, 이 값이 곧 '감속에 쓸 수 있는 각도' 다. 22.5° 로는
+      # 1.0 rad/s 의 관성을 못 죽여 목표를 지나쳤다 -> 34.4° 로 넓힌다.
+      angular_disengage_threshold: 0.6
       forward_sampling_distance: 0.6
       # 제자리 회전 속도/가속. smoother 상한(1.5 rad/s)을 넘기면 거기서 잘린다.
       # ⚠️ RotationShim 은 감속하며 접근하지 않는다. angular_disengage_threshold
