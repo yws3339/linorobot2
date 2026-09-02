@@ -65,7 +65,10 @@ def generate_launch_description():
                 'pointcloud.enable': LaunchConfiguration('pointcloud'),
                 'ordered_pc': 'true',
                 'initial_reset': 'false',
-                'depth_module.profile': '320,240,15',
+                # L515 는 320,240,15 를 거부하고 640x480x30 으로 되돌린다
+                # ("Given value, 320,240,15 is invalid"). 되돌아간 30fps 는
+                # 의도한 15fps 의 두 배라 젯슨 CPU 를 그만큼 더 먹는다.
+                'depth_module.profile': '640,480,15',
                 'rgb_camera.profile': '640,480,15',
                 'align_depth.enable': 'false',
                 'depth_module.global_time_enabled': 'true',
