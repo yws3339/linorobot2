@@ -152,8 +152,11 @@ controller_server:
       use_path_orientations: false
     # FollowPath:
     #   plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      # 회전반경 0.694m 차체 기준. 시뮬(navigation_sim.yaml)과 동일하게 맞춘다.
-      desired_linear_vel: 0.8
+      # 회전반경 0.694m 차체 기준.
+      # 무대 시연용으로 하향(2026-09-03). 0.4 m/s 면 로버가 제 몸길이(0.72m)를
+      # 지나는 데 1.8초라 사람이 개입할 여유가 있다. 아래의 곡선 감속 하한
+      # (regulated_linear_scaling_min_speed)보다 충분히 높아야 감속 여지가 남는다.
+      desired_linear_vel: 0.4
       lookahead_dist: 1.0
       min_lookahead_dist: 0.4
       max_lookahead_dist: 1.8
@@ -172,7 +175,9 @@ controller_server:
       use_cost_regulated_linear_velocity_scaling: true
       # 실제 회전반경 0.694m보다 넉넉히 위에서 감속을 시작하도록 0.9 → 1.2
       regulated_linear_scaling_min_radius: 1.2
-      regulated_linear_scaling_min_speed: 0.25
+      # 목표속도를 0.4 로 내렸으므로 하한도 같이 내린다. 0.25 로 두면
+      # 곡선에서 줄일 수 있는 폭이 0.15 밖에 안 남아 규제가 사실상 무의미해진다.
+      regulated_linear_scaling_min_speed: 0.15
       use_fixed_curvature_lookahead: false
       curvature_lookahead_dist: 0.6
       use_rotate_to_heading: true
@@ -458,8 +463,8 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.8, 0.0, 1.5]   # linear은 desired_linear_vel과 일치시킨다
-    min_velocity: [-0.8, 0.0, -1.5]
+    max_velocity: [0.4, 0.0, 1.5]   # linear은 desired_linear_vel과 일치시킨다
+    min_velocity: [-0.4, 0.0, -1.5]
     # angular 은 컨트롤러의 max_angular_accel(10.0)과 맞춘다. 여기가 낮으면
     # 컨트롤러가 아무리 세게 명령해도 smoother 가 다시 깎는다.
     max_accel: [2.0, 0.0, 10.0]
