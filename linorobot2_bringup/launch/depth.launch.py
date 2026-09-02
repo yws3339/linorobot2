@@ -65,10 +65,15 @@ def generate_launch_description():
                 'pointcloud.enable': LaunchConfiguration('pointcloud'),
                 'ordered_pc': 'true',
                 'initial_reset': 'false',
-                # L515 는 320,240,15 를 거부하고 640x480x30 으로 되돌린다
-                # ("Given value, 320,240,15 is invalid"). 되돌아간 30fps 는
-                # 의도한 15fps 의 두 배라 젯슨 CPU 를 그만큼 더 먹는다.
-                'depth_module.profile': '640,480,15',
+                # ⚠️ 두 조건을 동시에 만족해야 한다. 어기면 조용히 실패한다.
+                #  1) L515 depth 는 **30Hz 만** 지원한다(1024x768/640x480/320x240
+                #     전부 @30). 15 를 주면 "Given value ... is invalid" 를 찍고
+                #     640x480x30 으로 되돌아간다. 즉 여기 적은 값은 무시된다.
+                #  2) 해상도가 rgb_camera.profile 과 **같아야** 한다.
+                #     approach_fallen._read_depth 는 컬러 이미지 좌표(u,v)를 깊이
+                #     이미지에 스케일 없이 그대로 인덱싱한다. 320x240 으로 두면
+                #     좌표가 범위를 벗어나 depth 를 못 읽고 검출을 통째로 버린다.
+                'depth_module.profile': '640,480,30',
                 'rgb_camera.profile': '640,480,15',
                 'align_depth.enable': 'false',
                 'depth_module.global_time_enabled': 'true',
